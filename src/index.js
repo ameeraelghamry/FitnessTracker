@@ -8,5 +8,5 @@ const root = document.getElementById('root');
 reactDom.render(
     <BrowserRouter>
         <App />
-    </BrowserRouter>
+    </BrowserRouter>, root
 );
