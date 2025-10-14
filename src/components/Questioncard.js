@@ -21,7 +21,7 @@ export default function QuestionCard({
 }) {
   const progress = (step / totalSteps) * 100;
 
-  // These questions require manual input (so we keep the Next button)
+  // Questions requiring manual input
   const needsInput = [
     "HOW OLD ARE YOU?",
     "WHAT IS YOUR HEIGHT (CM)?",
@@ -29,11 +29,23 @@ export default function QuestionCard({
     "WHAT IS YOUR GOAL WEIGHT (KG)?",
   ].includes(question.text);
 
-  // Automatically go to next question for multiple-choice answers
+  const isMultiSelect = question.text === "WHAT ARE YOUR TARGET ZONES?";
+
   const handleSelect = (opt) => {
-    setSelected(opt);
-    if (!needsInput) {
-      setTimeout(() => handleNext(), 400); // smooth auto transition
+    if (isMultiSelect) {
+      // Toggle selection for multi-choice
+      let current = Array.isArray(selected) ? [...selected] : [];
+      if (current.includes(opt)) {
+        current = current.filter((item) => item !== opt);
+      } else {
+        current.push(opt);
+      }
+      setSelected(current);
+    } else {
+      setSelected(opt);
+      if (!needsInput) {
+        setTimeout(() => handleNext(), 400);
+      }
     }
   };
 
@@ -49,7 +61,7 @@ export default function QuestionCard({
         position: "relative",
       }}
     >
-      {/* Header (Back + Step info) */}
+      {/* Header */}
       <Box
         sx={{
           display: "flex",
@@ -62,12 +74,12 @@ export default function QuestionCard({
         <IconButton onClick={handleBack} size="small" disabled={step === 1}>
           <ArrowBackIosNewIcon fontSize="small" />
         </IconButton>
-        <Typography variant="body2" sx={{ ml: "auto", mr: "auto" }}>
+        <Typography variant="body2" sx={{ ml: "29%", mr: "30%" }}>
           Step {step} of {totalSteps}
         </Typography>
       </Box>
 
-      {/* Progress Bar */}
+      {/* Progress */}
       <LinearProgress
         variant="determinate"
         value={progress}
@@ -80,7 +92,7 @@ export default function QuestionCard({
         }}
       />
 
-      {/* Question Text */}
+      {/* Question */}
       <Typography
         variant="h6"
         sx={{ fontWeight: 700, mb: 3, textTransform: "uppercase" }}
@@ -88,7 +100,7 @@ export default function QuestionCard({
         {question.text}
       </Typography>
 
-      {/* Options or Input */}
+      {/* Answer Options */}
       <Box>
         {needsInput ? (
           <TextField
@@ -107,27 +119,48 @@ export default function QuestionCard({
         ) : (
           Array.isArray(question.options) &&
           question.options.map((opt, index) => (
-            <Box
-              key={index}
-              onClick={() => handleSelect(opt)}
-              sx={{
-                borderRadius: 1,
-                py: 1,
-                my: 0.5,
-                cursor: "pointer",
-                backgroundColor: selected === opt ? "#000" : "transparent",
-                color: selected === opt ? "#fff" : "#000",
-                transition: "0.2s",
-              }}
-            >
-              {opt}
-            </Box>
+ <Box
+      key={index}
+      onClick={() => handleSelect(opt)}
+      sx={{
+        borderRadius: 1,
+        py: 1,
+        my: 0.5,
+        cursor: "pointer",
+        backgroundColor: isMultiSelect
+          ? Array.isArray(selected) && selected.includes(opt)
+            ? "#477CD8"
+            : "#e4e4e4ff"
+          : selected === opt
+          ? "#477CD8"
+          : "#e4e4e4ff",
+        transition: "0.2s",
+      }}
+    >
+      <Typography
+        variant="body1"
+        sx={{
+          fontSize: "1rem",
+          textAlign: "center",
+          color: isMultiSelect
+            ? Array.isArray(selected) && selected.includes(opt)
+              ? "#fff"
+              : "#000"
+            : selected === opt
+            ? "#fff"
+            : "#000",
+          fontWeight: 500,
+        }}
+      >
+        {opt}
+      </Typography>
+    </Box>
           ))
         )}
       </Box>
 
-      {/* Next / Submit Button (only for input-type questions) */}
-      {needsInput && (
+      {/* Next Button (for input and multi-select) */}
+      {(needsInput || isMultiSelect) && (
         <Button
           variant="contained"
           sx={{
@@ -139,7 +172,11 @@ export default function QuestionCard({
             ":hover": { backgroundColor: "#345de4" },
           }}
           onClick={handleNext}
-          disabled={!selected}
+          disabled={
+            needsInput
+              ? !selected
+              : isMultiSelect && (!selected || selected.length === 0)
+          }
         >
           {step === totalSteps ? "Submit" : "Next Step"}
         </Button>

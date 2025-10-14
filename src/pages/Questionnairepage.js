@@ -9,7 +9,7 @@ import {
 } from "@mui/material";
 import QuestionCard from "../components/Questioncard";
 import backgroundImage from "../assets/images/proimmm 4.svg";
-import introImage from "../assets/images/Image.svg"; // 🆕 add your intro image here
+import introImage from "../assets/images/Image.svg"; // ✅ intro illustration
 
 const questions = [
   { text: "HOW OLD ARE YOU?" },
@@ -38,8 +38,8 @@ const questions = [
   },
 ];
 
-export default function QuestionnairePage() {
-  const [showIntro, setShowIntro] = useState(true); // 🆕 controls the intro screen
+export default function QuestionnairePage({ onFinish }) {
+  const [showIntro, setShowIntro] = useState(true);
   const [step, setStep] = useState(1);
   const [selected, setSelected] = useState(null);
   const [answers, setAnswers] = useState({});
@@ -58,6 +58,9 @@ export default function QuestionnairePage() {
       setSelected(null);
     } else {
       setSubmitted(true);
+      setTimeout(() => {
+        if (onFinish) onFinish(); // ✅ Trigger navigation or overlay close
+      }, 1500);
     }
   };
 
@@ -73,7 +76,9 @@ export default function QuestionnairePage() {
   return (
     <Box
       sx={{
-        position: "relative",
+        position: "fixed", // overlay effect
+        top: 0,
+        left: 0,
         height: "100vh",
         width: "100%",
         backgroundImage: `url(${backgroundImage})`,
@@ -83,11 +88,13 @@ export default function QuestionnairePage() {
         justifyContent: "center",
         alignItems: "center",
         overflow: "hidden",
+        zIndex: 9999,
+        transition: "opacity 0.4s ease-in-out",
         "&::before": {
           content: '""',
           position: "absolute",
           inset: 0,
-          backgroundColor: "rgba(0, 0, 0, 0.6)",
+          backgroundColor: "rgba(97, 97, 97, 0.15)",
           zIndex: 1,
         },
         "& > *": {
@@ -115,7 +122,7 @@ export default function QuestionnairePage() {
               sx={{ mb: 3, color: "text.secondary", px: 2 }}
             >
               Let’s get started with your training, where we’ll help you to
-              achieve your fitness goal
+              achieve your fitness goal.
             </Typography>
 
             <Avatar
@@ -138,27 +145,58 @@ export default function QuestionnairePage() {
                 fontWeight: 600,
                 "&:hover": { backgroundColor: "#2563eb" },
               }}
-              onClick={() => setShowIntro(false)} // 🔥 switch to questionnaire
+              onClick={() => setShowIntro(false)} // Switch to questions
             >
               Get Started!
             </Button>
           </CardContent>
         </Card>
-      ) : submitted ? (
-        <Box
+           ) : submitted ? (
+        <Card
           sx={{
-            color: "white",
+            width: 400,
+            maxWidth: "90%",
             textAlign: "center",
+            borderRadius: 3,
+            boxShadow: 5,
+            p: 3,
+            backgroundColor: "rgba(255, 255, 255, 0.9)",
           }}
         >
-          <Typography variant="h4" sx={{ mb: 3, fontWeight: 700 }}>
-            Thank You!
-          </Typography>
-          <Typography variant="h6" sx={{ mb: 2 }}>
-            You’ve completed the questionnaire.
-          </Typography>
-        </Box>
+          <CardContent>
+            <Typography
+              variant="h4"
+              sx={{
+                mb: 2,
+                fontWeight: 700,
+                color: "#1e293b",
+              }}
+            >
+              🎉 Thank You!
+            </Typography>
+
+            <Typography
+              variant="body1"
+              sx={{
+                color: "#475569",
+                mb: 2,
+              }}
+            >
+              You’ve completed the questionnaire.
+            </Typography>
+
+            <Typography
+              variant="body2"
+              sx={{
+                color: "#64748b",
+              }}
+            >
+              Let’s move on to your personalized fitness journey!
+            </Typography>
+          </CardContent>
+        </Card>
       ) : (
+
         <QuestionCard
           step={step}
           totalSteps={totalSteps}
