@@ -3,7 +3,7 @@ import { Box, Button, Typography, Modal } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import Header from "../components/header";
 import BackgroundImage from "../assets/images/Group23.svg";
-import QuestionnairePage from "../pages/Questionnairepage"; 
+import QuestionnairePage from "../pages/Questionnairepage";
 
 const HomePage = () => {
   const navigate = useNavigate();
@@ -81,48 +81,9 @@ const HomePage = () => {
               width: "180px",
               alignSelf: "flex-start",
             }}
-            onClick={handleOpen} // 👈 open overlay instead of navigate
+            onClick={handleOpen}
           >
             Get Started
-          </Button>
-        </Box>
-
-        {/* Bottom Buttons */}
-        <Box
-          sx={{
-            position: "absolute",
-            bottom: 40,
-            left: "50%",
-            transform: "translateX(-50%)",
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            gap: 2,
-            zIndex: 2,
-          }}
-        >
-          <Button
-            variant="contained"
-            sx={{
-              backgroundColor: "#477CD8",
-              "&:hover": { backgroundColor: "#162e58" },
-              width: "180px",
-            }}
-          >
-            Log In
-          </Button>
-
-          <Button
-            variant="outlined"
-            sx={{
-              color: "#fff",
-              width: "180px",
-              "&:hover": {
-                backgroundColor: "rgba(255, 255, 255, 0.1)",
-              },
-            }}
-          >
-            Sign Up
           </Button>
         </Box>
 
@@ -146,8 +107,9 @@ const HomePage = () => {
             <QuestionnairePage
               onFinish={() => {
                 handleClose();
-                navigate("/signup"); // 👈 navigate when finished
+                navigate("/signup");
               }}
+              onClose={handleClose} // ✅ Pass close handler
             />
           </Box>
         </Modal>

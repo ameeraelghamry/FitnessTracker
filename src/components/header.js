@@ -24,7 +24,7 @@ const Header = () => {
         <Box sx={{ display: "flex", gap: "2rem" }}>
           <Button
             sx={{
-              color: "black",
+              color: "white",
               textTransform: "none",
               fontWeight: 500,
             }}
@@ -35,7 +35,7 @@ const Header = () => {
           </Button>
           <Button
             sx={{
-              color: "black",
+              color: "white",
               textTransform: "none",
               fontWeight: 500,
             }}
@@ -46,7 +46,7 @@ const Header = () => {
           </Button>
           <Button
             sx={{
-              color: "black",
+              color: "white",
               textTransform: "none",
               fontWeight: 500,
             }}
@@ -69,7 +69,7 @@ const Header = () => {
             "&:hover": { backgroundColor: "#0a1f44" },
           }}
         >
-          Start Free Trial
+          login
         </Button>
       </Toolbar>
     </AppBar>

@@ -29,7 +29,10 @@ export default function QuestionCard({
     "WHAT IS YOUR GOAL WEIGHT (KG)?",
   ].includes(question.text);
 
-  const isMultiSelect = question.text === "WHAT ARE YOUR TARGET ZONES?";
+   const isMultiSelect = [
+    "WHAT ARE YOUR TARGET ZONES?",
+    "WHAT equipments do you have available ?",
+  ].includes(question.text);
 
   const handleSelect = (opt) => {
     if (isMultiSelect) {
