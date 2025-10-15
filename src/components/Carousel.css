@@ -23,6 +23,7 @@
 
 .carousel-card {
   flex: 1 0 calc(25% - 12px);
+  aspect-ratio: 1 / 1;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -35,8 +36,9 @@
 }
 
 .carousel-card img {
-  max-width: 100%;
-  height: 120px;
+  width: 70%;
+  height: auto;
+  max-height: 70%;
   object-fit: contain;
   margin-bottom: 12px;
 }
