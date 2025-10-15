@@ -9,6 +9,7 @@ import Footer from './components/Footer';
 import Home from './pages/HomePage';
 import ExerciseDetail from './pages/ExerciseDetail';
 import QuestionnairePage from './pages/Questionnairepage';
+import ProfilePage from './pages/ProfilePage';
 
 const App = () => {
     return (
@@ -19,6 +20,7 @@ const App = () => {
                 <Route path="/" element={<Home />} />
                 <Route path="/exercise/:id" element={<ExerciseDetail />} />
                  <Route path="/Questionnairepage" element={< QuestionnairePage/>} />
+                 <Route path="/ProfilePage" element={< ProfilePage/>} />
             </Routes>
 
           
