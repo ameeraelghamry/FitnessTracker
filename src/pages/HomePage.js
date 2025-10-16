@@ -67,7 +67,7 @@ const HomePage = () => {
               color: "#fff",
             }}
           >
-            Through Personalized Coaching, Cutting Edge Techniques, and Support —  
+            Through Personalized Coaching, Cutting Edge Techniques, and Support —
             We Will Help You Achieve The Fitness Goals You’ve Always Wanted.
           </Typography>
 
