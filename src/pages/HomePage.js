@@ -19,7 +19,6 @@ const HomePage = () => {
 
   return (
     <>
-      {/* Header */}
       <Header />
 
       {/* Sections */}
