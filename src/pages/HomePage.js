@@ -1,8 +1,13 @@
 import React, { useState } from "react";
-import { Box, Button, Typography, Modal } from "@mui/material";
+import { Box, Modal, Typography, Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import Header from "../components/header";
-import BackgroundImage from "../assets/images/Group23.svg";
+
+import Header from "../components/mainpage/header";
+import HeroSection from "../components/mainpage/HeroSection";
+import ProgramsSection from "../components/mainpage/ProgramsSection";
+import TrainersSection from "../components/mainpage/TrainersSection";
+import Footer from "../components/mainpage/Footer";
+import JoinSection from "../components/mainpage/JoinSection";
 import QuestionnairePage from "../pages/Questionnairepage";
 
 const HomePage = () => {
@@ -16,44 +21,38 @@ const HomePage = () => {
     <>
       <Header />
 
-      {/* Hero Section */}
-      <Box
+      {/* Sections */}
+      <HeroSection onGetStarted={handleOpen} />
+      <ProgramsSection />
+      <TrainersSection />
+      <JoinSection onGetStarted={handleOpen} />
+      <Footer />
+
+      <Modal
+        open={openQuestionnaire}
+        onClose={handleClose}
         sx={{
-          position: "relative",
-          height: "100vh",
-          backgroundImage: `url(${BackgroundImage})`,
-          backgroundRepeat: "no-repeat",
-          backgroundSize: "cover",
-          backgroundPosition: "center",
+          backdropFilter: "blur(5px)",
+          backgroundColor: "rgba(0, 0, 0, 0.7)",
           display: "flex",
-          alignItems: "flex-start",
-          justifyContent: "flex-start",
-          flexDirection: "column",
-          color: "#fff",
-          px: { xs: 2, md: 8 },
-          pt: { xs: 12, md: 20 },
+          alignItems: "center",
+          justifyContent: "center",
         }}
       >
-        {/* Overlay */}
         <Box
           sx={{
-            position: "absolute",
-            inset: 0,
-            backgroundColor: "rgba(0, 0, 0, 0.3)",
-            zIndex: 1,
+            background:
+              "linear-gradient(to bottom, rgba(0,0,0,1), rgba(40,40,40,0.8), rgba(0,0,0,1))",
+            borderRadius: "20px",
+            padding: "40px",
+            width: "90%",
+            maxWidth: "700px",
+            color: "#fff",
           }}
-        />
-
-        {/* Text Content */}
-        <Box sx={{ position: "relative", zIndex: 2, maxWidth: "600px" }}>
+        >
           <Typography
             variant="h3"
-            sx={{
-              fontWeight: 700,
-              mb: 2,
-              textAlign: "left",
-              color: "#fff",
-            }}
+            sx={{ fontWeight: 700, mb: 2, textAlign: "center" }}
           >
             ACHIEVE YOUR FITNESS DREAMS
           </Typography>
@@ -63,57 +62,34 @@ const HomePage = () => {
             sx={{
               mb: 3,
               fontSize: "1.1rem",
-              textAlign: "left",
-              color: "#fff",
+              textAlign: "center",
+              color: "#f5f5f5",
             }}
           >
-            Through Personalized Coaching, Cutting Edge Techniques, and Support —  
+            Through Personalized Coaching, Cutting Edge Techniques, and Support —
             We Will Help You Achieve The Fitness Goals You’ve Always Wanted.
           </Typography>
 
-          {/* Get Started Button */}
-          <Button
-            variant="contained"
-            color="primary"
-            sx={{
-              backgroundColor: "#477CD8",
-              "&:hover": { backgroundColor: "#0039cb" },
-              width: "180px",
-              alignSelf: "flex-start",
-            }}
-            onClick={handleOpen}
-          >
-            Get Started
-          </Button>
-        </Box>
-
-        {/* Questionnaire Modal Overlay */}
-        <Modal
-          open={openQuestionnaire}
-          onClose={handleClose}
-          sx={{
-            backdropFilter: "blur(0px)",
-          }}
-        >
-          <Box
-            sx={{
-              width: "100%",
-              height: "100%",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            <QuestionnairePage
-              onFinish={() => {
+          <Box sx={{ display: "flex", justifyContent: "center", gap: 2 }}>
+            <Button
+              variant="contained"
+              sx={{
+                backgroundColor: "#477CD8",
+                "&:hover": { backgroundColor: "#0039cb" },
+              }}
+              onClick={() => {
                 handleClose();
                 navigate("/signup");
               }}
-              onClose={handleClose} // ✅ Pass close handler
-            />
+            >
+              Get Started
+            </Button>
+            <Button variant="outlined" color="inherit" onClick={handleClose}>
+              Cancel
+            </Button>
           </Box>
-        </Modal>
-      </Box>
+        </Box>
+      </Modal>
     </>
   );
 };
