@@ -1,11 +1,7 @@
 import React from "react";
 import { AppBar, Toolbar, Button, Box } from "@mui/material";
 import { Link } from "react-router-dom";
-<<<<<<< HEAD:src/components/header.js
-import FitVerseLogo from "../assets/images/FitVerse.svg";
-=======
-import FitVerseLogo from "../../assets/images/FitVerse.svg"; 
->>>>>>> origin/main:src/components/mainpage/header.js
+import FitVerseLogo from "../../assets/images/FitVerse.svg";
 
 const Header = () => {
   return (
