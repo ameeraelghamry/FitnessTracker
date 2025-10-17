@@ -10,6 +10,7 @@ import Home from './pages/HomePage';
 import ExerciseDetail from './pages/ExerciseDetail';
 import QuestionnairePage from './pages/Questionnairepage';
 import ProfilePage from './pages/ProfilePage';
+import RoutinesPage from './pages/RoutinesPage';
 
 const App = () => {
     return (
@@ -21,6 +22,7 @@ const App = () => {
                 <Route path="/exercise/:id" element={<ExerciseDetail />} />
                  <Route path="/Questionnairepage" element={< QuestionnairePage/>} />
                  <Route path="/ProfilePage" element={< ProfilePage/>} />
+                    <Route path="/RoutinesPage" element={< RoutinesPage/>} />
             </Routes>
 
           
