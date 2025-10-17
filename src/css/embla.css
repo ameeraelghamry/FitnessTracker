@@ -1,6 +1,5 @@
 .embla {
     max-width: 90rem;
-    /* widened so 4 slides fit comfortably */
     height: auto;
     /* prevents stretching */
 
@@ -39,9 +38,7 @@
     transform: translate3d(0, 0, 0);
     flex: 0 0 var(--slide-size);
     min-width: 300px;
-    /* 👈 minimum width per slide */
     max-width: 500px;
-    /* 👈 maximum width per slide */
     padding-left: var(--slide-spacing);
 
     margin-top: 20px;

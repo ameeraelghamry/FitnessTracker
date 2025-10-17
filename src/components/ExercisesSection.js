@@ -20,7 +20,7 @@ export default function ExercisesSection() {
                 method: 'GET',
                 url: 'https://exercisedb.p.rapidapi.com/exercises',
                 headers: {
-                    'x-rapidapi-key': process.env.REACT_APP_RAPID_API_KEY, // ✅ Correct way to use env key
+                    'x-rapidapi-key': process.env.REACT_APP_RAPID_API_KEY,
                     'x-rapidapi-host': 'exercisedb.p.rapidapi.com',
                 },
             };

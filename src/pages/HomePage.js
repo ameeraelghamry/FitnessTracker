@@ -109,7 +109,7 @@ const HomePage = () => {
                 handleClose();
                 navigate("/signup");
               }}
-              onClose={handleClose} // ✅ Pass close handler
+              onClose={handleClose}
             />
           </Box>
         </Modal>

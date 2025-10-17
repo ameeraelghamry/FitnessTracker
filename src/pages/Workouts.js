@@ -1,6 +1,6 @@
 import React from "react";
 import { Box } from "@mui/material";
-import Header from "../components/header"; // adjust path if needed
+import Header from "../components/header";
 import BackgroundImage from "../assets/images/workoutPage.jpg";
 import SearchExercises from "../components/SearchExercises";
 import EmblaCarousel from "../components/EmblaCarousel";
@@ -13,8 +13,8 @@ import backIcon from '../assets/icons/back.png';
 import chestIcon from '../assets/icons/chest.png';
 import legsIcon from '../assets/icons/leg.png';
 import calvesIcon from '../assets/icons/calves.png';
+import Footer from "../components/Footer";
 
-// 👇 Each slide now uses the image path instead of a component
 const SLIDES = [
     { icon: calvesIcon, label: "Calves" },
     { icon: legsIcon, label: "Legs" },
@@ -28,17 +28,15 @@ const SLIDES = [
 
 const OPTIONS = {
     loop: true,
-    slidesToScroll: 4,   // 👈 scrolls 4 slides each time
+    slidesToScroll: 4,
     align: 'start'
 }
-const SLIDE_COUNT = 8   // 👈 2 groups of 4 slides
 
 const Workouts = () => {
     return (
         <>
             <Header />
 
-            {/* Hero Section with Search on top */}
             <Box
                 sx={{
                     position: "relative",
@@ -91,7 +89,6 @@ const Workouts = () => {
                     <ExercisesSection />
                 </div>
             </Box>
-
 
         </>
     );
