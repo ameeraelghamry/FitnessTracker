@@ -1,14 +1,5 @@
 import React, { useState } from "react";
-import {
-  Box,
-  Typography,
-  Card,
-  CardContent,
-  Avatar,
-  Button,
-  IconButton,
-} from "@mui/material";
-import CloseIcon from "@mui/icons-material/Close";
+import { Box, Card, CardContent, Typography, Avatar } from "@mui/material";
 import QuestionCard from "../components/Questioncard";
 import backgroundImage from "../assets/images/proimmm 4.svg";
 import introImage from "../assets/images/Image.svg";
@@ -20,7 +11,10 @@ const questions = [
   { text: "HOW MANY DAYS A WEEK DO YOU TRAIN?", options: [1, 2, 3, 4, 5, 6, 7] },
   { text: "WHAT IS YOUR HEIGHT (CM)?" },
   { text: "WHAT IS YOUR WEIGHT (KG)?" },
-  { text: "WHAT equipments do you have available ?", options: ["Dumbbells or kettlebells", "Barbells", "Machines or Cables", "Resistance Bands","No Equipment"] },
+  {
+    text: "WHAT equipments do you have available ?",
+    options: ["Dumbbells or kettlebells", "Barbells", "Machines or Cables", "Resistance Bands", "No Equipment"],
+  },
   {
     text: "WHAT ARE YOUR TARGET ZONES?",
     options: ["Arm", "Back", "Chest", "Abs", "Legs", "Butt"],
@@ -30,7 +24,6 @@ const questions = [
     options: ["New to fitness", "Beginner", "Intermediate", "Advanced"],
   },
   { text: "WHAT IS YOUR GOAL WEIGHT (KG)?" },
-  
   {
     text: "WHAT IS A PERFECT LENGTH OF A WORKOUT FOR YOU?",
     options: ["15 min", "Up to 30 mins", "1 hour", "I'll do whatever it takes"],
@@ -67,10 +60,6 @@ export default function QuestionnairePage({ onFinish, onClose }) {
   const handleBack = () => {
     if (step > 1) setStep(step - 1);
   };
-  const handleSkip = () => {
-    setAnswers((prev) => ({ ...prev, [currentQuestion.text]: "Skipped" }));
-    goNext();
-  };
 
   return (
     <Box
@@ -88,7 +77,6 @@ export default function QuestionnairePage({ onFinish, onClose }) {
         alignItems: "center",
         overflow: "hidden",
         zIndex: 9999,
-        transition: "opacity 0.4s ease-in-out",
         "&::before": {
           content: '""',
           position: "absolute",
@@ -101,22 +89,6 @@ export default function QuestionnairePage({ onFinish, onClose }) {
         },
       }}
     >
-      
-      <IconButton
-        onClick={onClose}
-        sx={{
-          position: "absolute",
-          top: 20,
-          right: 20,
-          color: "#fff",
-          backgroundColor: "rgba(0,0,0,0.1)",
-          
-          zIndex: 3,
-        }}
-      >
-        <CloseIcon />
-      </IconButton>
-
       {showIntro ? (
         <Card
           sx={{
@@ -126,6 +98,7 @@ export default function QuestionnairePage({ onFinish, onClose }) {
             borderRadius: 3,
             boxShadow: 5,
             p: 3,
+            backgroundColor: "rgba(255,255,255,0.95)",
           }}
         >
           <CardContent>
@@ -151,19 +124,21 @@ export default function QuestionnairePage({ onFinish, onClose }) {
               }}
             />
 
-            <Button
-              variant="contained"
-              fullWidth
-              sx={{
-                backgroundColor: "#3b82f6",
-                textTransform: "none",
-                fontWeight: 600,
-                "&:hover": { backgroundColor: "#2563eb" },
-              }}
+            <button
               onClick={() => setShowIntro(false)}
+              style={{
+                backgroundColor: "#3b82f6",
+                color: "#fff",
+                border: "none",
+                padding: "10px 0",
+                width: "100%",
+                borderRadius: "8px",
+                fontWeight: 600,
+                cursor: "pointer",
+              }}
             >
               Get Started!
-            </Button>
+            </button>
           </CardContent>
         </Card>
       ) : submitted ? (
@@ -219,7 +194,7 @@ export default function QuestionnairePage({ onFinish, onClose }) {
           setSelected={setSelected}
           handleNext={handleNext}
           handleBack={handleBack}
-          handleSkip={handleSkip}
+          onClose={onClose}
         />
       )}
     </Box>

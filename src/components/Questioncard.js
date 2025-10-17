@@ -9,6 +9,7 @@ import {
   TextField,
 } from "@mui/material";
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
+import CloseIcon from "@mui/icons-material/Close";
 
 export default function QuestionCard({
   step,
@@ -18,10 +19,10 @@ export default function QuestionCard({
   setSelected,
   handleNext,
   handleBack,
+  onClose,
 }) {
   const progress = (step / totalSteps) * 100;
 
-  // Questions requiring manual input
   const needsInput = [
     "HOW OLD ARE YOU?",
     "WHAT IS YOUR HEIGHT (CM)?",
@@ -29,14 +30,13 @@ export default function QuestionCard({
     "WHAT IS YOUR GOAL WEIGHT (KG)?",
   ].includes(question.text);
 
-   const isMultiSelect = [
+  const isMultiSelect = [
     "WHAT ARE YOUR TARGET ZONES?",
     "WHAT equipments do you have available ?",
   ].includes(question.text);
 
   const handleSelect = (opt) => {
     if (isMultiSelect) {
-      // Toggle selection for multi-choice
       let current = Array.isArray(selected) ? [...selected] : [];
       if (current.includes(opt)) {
         current = current.filter((item) => item !== opt);
@@ -55,15 +55,31 @@ export default function QuestionCard({
   return (
     <Card
       sx={{
-        zIndex: 1,
         width: 400,
         borderRadius: 3,
         p: 4,
         textAlign: "center",
         backgroundColor: "rgba(255,255,255,0.95)",
         position: "relative",
+        boxShadow: 5,
       }}
     >
+      
+      <IconButton
+        onClick={onClose}
+        size="small"
+        sx={{
+          position: "absolute",
+          top: 10,
+          right: 10,
+          backgroundColor: "#f5f5f5",
+          color: "#000",
+          "&:hover": { backgroundColor: "#e0e0e0" },
+        }}
+      >
+        <CloseIcon fontSize="small" />
+      </IconButton>
+
       {/* Header */}
       <Box
         sx={{
@@ -122,47 +138,47 @@ export default function QuestionCard({
         ) : (
           Array.isArray(question.options) &&
           question.options.map((opt, index) => (
- <Box
-      key={index}
-      onClick={() => handleSelect(opt)}
-      sx={{
-        borderRadius: 1,
-        py: 1,
-        my: 0.5,
-        cursor: "pointer",
-        backgroundColor: isMultiSelect
-          ? Array.isArray(selected) && selected.includes(opt)
-            ? "#477CD8"
-            : "#e4e4e4ff"
-          : selected === opt
-          ? "#477CD8"
-          : "#e4e4e4ff",
-        transition: "0.2s",
-      }}
-    >
-      <Typography
-        variant="body1"
-        sx={{
-          fontSize: "1rem",
-          textAlign: "center",
-          color: isMultiSelect
-            ? Array.isArray(selected) && selected.includes(opt)
-              ? "#fff"
-              : "#000"
-            : selected === opt
-            ? "#fff"
-            : "#000",
-          fontWeight: 500,
-        }}
-      >
-        {opt}
-      </Typography>
-    </Box>
+            <Box
+              key={index}
+              onClick={() => handleSelect(opt)}
+              sx={{
+                borderRadius: 1,
+                py: 1,
+                my: 0.5,
+                cursor: "pointer",
+                backgroundColor: isMultiSelect
+                  ? Array.isArray(selected) && selected.includes(opt)
+                    ? "#477CD8"
+                    : "#e4e4e4ff"
+                  : selected === opt
+                  ? "#477CD8"
+                  : "#e4e4e4ff",
+                transition: "0.2s",
+              }}
+            >
+              <Typography
+                variant="body1"
+                sx={{
+                  fontSize: "1rem",
+                  textAlign: "center",
+                  color: isMultiSelect
+                    ? Array.isArray(selected) && selected.includes(opt)
+                      ? "#fff"
+                      : "#000"
+                    : selected === opt
+                    ? "#fff"
+                    : "#000",
+                  fontWeight: 500,
+                }}
+              >
+                {opt}
+              </Typography>
+            </Box>
           ))
         )}
       </Box>
 
-      {/* Next Button (for input and multi-select) */}
+      {/* Next Button */}
       {(needsInput || isMultiSelect) && (
         <Button
           variant="contained"
