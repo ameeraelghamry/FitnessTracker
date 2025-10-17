@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import React, { useEffect, useState } from "react";
+import axios from "axios";
 import {
     Grid,
     Card,
@@ -9,7 +9,7 @@ import {
     Typography,
     CardActions,
     Button,
-} from '@mui/material';
+} from "@mui/material";
 
 export default function ExercisesSection() {
     const [exercises, setExercises] = useState([]);
@@ -17,19 +17,22 @@ export default function ExercisesSection() {
     useEffect(() => {
         const fetchExercises = async () => {
             const options = {
-                method: 'GET',
-                url: 'https://exercisedb.p.rapidapi.com/exercises',
-                headers: {
-                    'x-rapidapi-key': process.env.REACT_APP_RAPID_API_KEY, // ✅ Correct way to use env key
-                    'x-rapidapi-host': 'exercisedb.p.rapidapi.com',
-                },
+                method: "GET",
+                url: "https://www.exercisedb.dev/api/v1/exercises?limit=28",
             };
 
             try {
-                const response = await axios.request(options);
-                setExercises(response.data.slice(0, 20)); // limit to 20 cards
+                const { data } = await axios.request(options);
+                console.log("API Response:", data);
+
+                if (Array.isArray(data.data)) {
+                    setExercises(data.data);
+                } else {
+                    console.error("Unexpected API structure:", data);
+                    setExercises([]);
+                }
             } catch (error) {
-                console.error('Error fetching exercises:', error);
+                console.error("Error fetching exercises:", error);
             }
         };
 
@@ -38,55 +41,38 @@ export default function ExercisesSection() {
 
     return (
         <Grid container spacing={3} sx={{ p: 4 }}>
-            {exercises.map((exercise) => (
-                <Grid
-                    item
-                    xs={12}
-                    sm={6}
-                    md={4}
-                    lg={2.4} // 5 per row on large screens
-                    key={exercise.id}
-                >
+            {exercises.map((exercise, idx) => (
+                <Grid item xs={12} sm={6} md={3} key={exercise.exerciseId ?? idx}>
                     <Card
                         sx={{
-                            maxWidth: 345,
-                            height: '100%',
-                            borderRadius: 3,
+                            height: "100%",
+                            background: "#1A1A1A",
                             boxShadow: 3,
-                            transition: 'transform 0.3s',
-                            '&:hover': { transform: 'scale(1.05)' },
+                            transition: "transform 0.3s",
+                            "&:hover": { transform: "scale(1.05)" },
                         }}
                     >
                         <CardActionArea>
                             <CardMedia
                                 component="img"
-                                height="180"
-                                image={exercise.gifUrl}
+                                sx={{ height: 180 }}
+                                image={exercise.gifUrl || ""}
                                 alt={exercise.name}
+                                onError={(e) => (e.target.style.display = "none")}
                             />
                             <CardContent>
                                 <Typography
                                     gutterBottom
                                     variant="h6"
-                                    component="div"
-                                    sx={{ textTransform: 'capitalize' }}
+                                    sx={{ color: "#fff", textTransform: "capitalize" }}
                                 >
                                     {exercise.name}
                                 </Typography>
-
-                                <Typography variant="body2" color="text.secondary">
-                                    Body Part: {exercise.bodyPart}
+                                <Typography variant="body2" color="#fff">
+                                    Body Part: {exercise.bodyParts?.[0]}
                                 </Typography>
-                                <Typography variant="body2" color="text.secondary">
-                                    Target: {exercise.target}
-                                </Typography>
-
-                                <Typography
-                                    variant="body2"
-                                    color="text.secondary"
-                                    sx={{ mt: 1 }}
-                                >
-                                    Duration: {Math.floor(Math.random() * 20) + 10} mins
+                                <Typography variant="body2" color="#fff">
+                                    Target: {exercise.targetMuscles?.[0]}
                                 </Typography>
                             </CardContent>
                         </CardActionArea>

@@ -1,6 +1,5 @@
 .embla {
     max-width: 90rem;
-    /* widened so 4 slides fit comfortably */
     height: auto;
     /* prevents stretching */
 
@@ -12,10 +11,10 @@
 }
 
 .embla__slide__content {
-    border: 2px solid white;
+    border: none;
     border-radius: 1rem;
-    background-color: rgba(255, 255, 255, 0.05);
-    color: white;
+    background-color: rgba(255, 255, 255, 0.364);
+    color: black;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -23,6 +22,7 @@
     aspect-ratio: 1 / 1;
     transition: transform 0.3s ease, background-color 0.3s ease;
     font-family: 'Poppins', sans-serif;
+    font-weight: 600;
 }
 
 .embla__viewport {
@@ -39,9 +39,7 @@
     transform: translate3d(0, 0, 0);
     flex: 0 0 var(--slide-size);
     min-width: 300px;
-    /* 👈 minimum width per slide */
     max-width: 500px;
-    /* 👈 maximum width per slide */
     padding-left: var(--slide-spacing);
 
     margin-top: 20px;
@@ -52,6 +50,9 @@
     justify-content: center;
 }
 
+.embla__slide__label {
+    margin-bottom: 15px;
+}
 
 /* Controls unchanged */
 .embla__controls {
