@@ -10,6 +10,7 @@ import ProfilePage from './pages/ProfilePage';
 import RoutinesPage from './pages/RoutinesPage';
 import Workouts from './pages/Workouts';
 import BodyPartPage from "./pages/BodyPart";
+import LoginSignup from "./pages/Login-Signup"
 
 const App = () => {
     return (
@@ -24,6 +25,8 @@ const App = () => {
                 <Route path="/Questionnairepage" element={< QuestionnairePage />} />
                 <Route path="/Workouts" element={< Workouts />} />
                 <Route path="/bodypart/:bodyPartName" element={<BodyPartPage />} />
+                <Route path="/Login-Signup" element={<LoginSignup />} />
+                
 
             </Routes>
 
