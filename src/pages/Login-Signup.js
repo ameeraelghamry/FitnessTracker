@@ -7,6 +7,7 @@ import styles from "../mui/theme";
 
 function App() {
   const [isSignUp, setIsSignUp] = useState(false);
+  const [showForm, setShowForm] = useState(true); // new state to control visibility
 
   return (
     <Box sx={styles.root(gymImage)}>
@@ -20,22 +21,47 @@ function App() {
           </Typography>
         </Box>
 
-        {isSignUp ? <Signup /> : <Login />}
+        {/* Conditionally show the form only when showForm is true */}
+        {showForm && (
+          <>
+            {isSignUp ? (
+              <Signup onClose={() => setShowForm(false)} />
+            ) : (
+              <Login onClose={() => setShowForm(false)} />
+            )}
+          </>
+        )}
 
-        <Box sx={styles.buttonBox}>
-          <Button
-            variant={isSignUp ? "outlined" : "contained"}
-            onClick={() => setIsSignUp(false)}
-          >
-            Login
-          </Button>
-          <Button
-            variant={isSignUp ? "contained" : "outlined"}
-            onClick={() => setIsSignUp(true)}
-          >
-            Sign Up
-          </Button>
-        </Box>
+        {/* Show buttons only when the form is visible */}
+        {showForm && (
+          <Box sx={styles.buttonBox}>
+            <Button
+              variant={isSignUp ? "outlined" : "contained"}
+              onClick={() => setIsSignUp(false)}
+            >
+              Login
+            </Button>
+            <Button
+              variant={isSignUp ? "contained" : "outlined"}
+              onClick={() => setIsSignUp(true)}
+            >
+              Sign Up
+            </Button>
+          </Box>
+        )}
+
+        {/* Show a button to reopen the form after closing */}
+        {!showForm && (
+          <Box sx={{ textAlign: "center", mt: 3 }}>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={() => setShowForm(true)}
+            >
+              Reopen Form
+            </Button>
+          </Box>
+        )}
       </Paper>
     </Box>
   );
