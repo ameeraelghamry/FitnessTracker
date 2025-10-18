@@ -61,7 +61,7 @@ const styles = {
    
   },
   textField: {
-    input: { color: "#F6F6F6", fontWeight: 500, letterSpacing: "1px" }, 
+    input: { color: "#000", fontWeight: 500, letterSpacing: "1px" }, 
     label: { color: "#87A3B8" },
     "& .MuiFilledInput-root": {
       backgroundColor: "rgba(255,255,255,0.07)",

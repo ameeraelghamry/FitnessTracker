@@ -3,7 +3,7 @@ import { AppBar, Toolbar, Button, Box } from "@mui/material";
 import { Link } from "react-router-dom";
 import FitVerseLogo from "../../assets/images/FitVerse.svg";
 
-const Header = () => {
+const Header = ({ onLoginClick }) => {
   return (
     <AppBar
       position="absolute"
@@ -23,33 +23,21 @@ const Header = () => {
         {/* Navigation Links */}
         <Box sx={{ display: "flex", gap: "2rem" }}>
           <Button
-            sx={{
-              color: "white",
-              textTransform: "none",
-              fontWeight: 500,
-            }}
+            sx={{ color: "white", textTransform: "none", fontWeight: 500 }}
             component={Link}
             to="/trainers"
           >
             Our Trainers
           </Button>
           <Button
-            sx={{
-              color: "white",
-              textTransform: "none",
-              fontWeight: 500,
-            }}
+            sx={{ color: "white", textTransform: "none", fontWeight: 500 }}
             component={Link}
             to="/workouts"
           >
             Workouts
           </Button>
           <Button
-            sx={{
-              color: "white",
-              textTransform: "none",
-              fontWeight: 500,
-            }}
+            sx={{ color: "white", textTransform: "none", fontWeight: 500 }}
             component={Link}
             to="/about"
           >
@@ -60,6 +48,7 @@ const Header = () => {
         {/* Right CTA Button */}
         <Button
           variant="contained"
+          onClick={onLoginClick}
           sx={{
             backgroundColor: "#477CD8",
             color: "#fff",
@@ -69,7 +58,7 @@ const Header = () => {
             "&:hover": { backgroundColor: "#0a1f44" },
           }}
         >
-          login
+          Login
         </Button>
       </Toolbar>
     </AppBar>
