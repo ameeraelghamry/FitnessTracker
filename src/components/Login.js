@@ -8,18 +8,32 @@ function Login() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    setError("");
-    const user = findUser(email, password);
-    if (!user) {
-      setError("Invalid email or password.");
+  const handleSubmit = async (e) => {
+  e.preventDefault();
+  setError("");
+
+  try {
+    const res = await fetch("http://localhost:3000/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password }),
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      setError(data.error);
       return;
     }
-    alert(`Welcome, ${user.username}!`);
+
+    alert(data.message);
     setEmail("");
     setPassword("");
-  };
+  } catch (err) {
+    setError("Server error. Please try again later.");
+  }
+};
+
 
   return (
     <Box component="form" onSubmit={handleSubmit} sx={styles.formBox}>
