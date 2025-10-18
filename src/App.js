@@ -6,6 +6,8 @@ import Footer from './components/mainpage/Footer';
 import Home from './pages/HomePage';
 import ExerciseDetail from './pages/ExerciseDetail';
 import QuestionnairePage from './pages/Questionnairepage';
+import ProfilePage from './pages/ProfilePage';
+import RoutinesPage from './pages/RoutinesPage';
 import Workouts from './pages/Workouts';
 import BodyPartPage from "./pages/BodyPart";
 
@@ -17,6 +19,8 @@ const App = () => {
             <Routes>
                 <Route path="/" element={<Home />} />
                 <Route path="/exercise/:id" element={<ExerciseDetail />} />
+                 <Route path="/ProfilePage" element={< ProfilePage/>} />
+                    <Route path="/RoutinesPage" element={< RoutinesPage/>} />
                 <Route path="/Questionnairepage" element={< QuestionnairePage />} />
                 <Route path="/Workouts" element={< Workouts />} />
                 <Route path="/bodypart/:bodyPartName" element={<BodyPartPage />} />

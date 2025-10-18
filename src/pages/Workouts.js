@@ -5,8 +5,7 @@ import BackgroundImage from "../assets/images/workoutPage.jpg";
 import SearchExercises from "../components/SearchExercises";
 import EmblaCarousel from "../components/EmblaCarousel";
 import ExercisesSection from "../components/ExercisesSection";
-import "../css/base.css";
-import "../css/embla.css";
+
 
 import backIcon from "../assets/icons/back.png";
 import chestIcon from "../assets/icons/chest.png";
