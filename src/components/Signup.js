@@ -9,19 +9,33 @@ function Signup() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    setError("");
-    if (userExists(email)) {
-      setError("User with this email already exists.");
+  const handleSubmit = async (e) => {
+  e.preventDefault();
+  setError("");
+
+  try {
+    const res = await fetch("http://localhost:3000/signup", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ username, email, password }),
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      setError(data.error);
       return;
     }
-    saveUser({ username, email, password });
-    alert("Signup successful! Please log in.");
+
+    alert(data.message);
     setUsername("");
     setEmail("");
     setPassword("");
-  };
+  } catch (err) {
+    setError("Server error. Please try again later.");
+  }
+};
+
 
   return (
     <Box component="form" onSubmit={handleSubmit} sx={styles.formBox}>
