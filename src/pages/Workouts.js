@@ -78,7 +78,7 @@ const Workouts = () => {
             {/* Exercises Section */}
             <Box
                 sx={{
-                    background: "#030509",
+                    background: "#0C1018",
                     backgroundSize: "cover",
                     backgroundPosition: "center",
                     display: "flex",

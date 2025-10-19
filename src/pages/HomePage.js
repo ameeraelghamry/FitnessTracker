@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { Box, Modal } from "@mui/material";
-import { useNavigate } from "react-router-dom";
 import Header from "../components/mainpage/header";
 import HeroSection from "../components/mainpage/HeroSection";
 import ProgramsSection from "../components/mainpage/ProgramsSection";
@@ -8,32 +7,44 @@ import TrainersSection from "../components/mainpage/TrainersSection";
 import Footer from "../components/mainpage/Footer";
 import JoinSection from "../components/mainpage/JoinSection";
 import QuestionnairePage from "../pages/Questionnairepage";
+import Signup from "../components/Signup";
+import Login from "../components/Login";
 
 const HomePage = () => {
-  const navigate = useNavigate();
   const [openQuestionnaire, setOpenQuestionnaire] = useState(false);
+  const [showSignup, setShowSignup] = useState(false);
+  const [openLogin, setOpenLogin] = useState(false);
 
-  const handleOpen = () => setOpenQuestionnaire(true);
-  const handleClose = () => setOpenQuestionnaire(false);
+  const handleOpenQuestionnaire = () => {
+    setOpenQuestionnaire(true);
+    setShowSignup(false);
+  };
+
+  const handleCloseQuestionnaire = () => {
+    setOpenQuestionnaire(false);
+    setShowSignup(false);
+  };
+
+  const handleLoginOpen = () => setOpenLogin(true);
+  const handleLoginClose = () => setOpenLogin(false);
 
   return (
     <>
-      <Header />
+      <Header onLoginClick={handleLoginOpen} />
 
       {/* Sections */}
-      <HeroSection onGetStarted={handleOpen} />
+      <HeroSection onGetStarted={handleOpenQuestionnaire} />
       <ProgramsSection />
       <TrainersSection />
-      {/* ✅ Pass the same handler so Join Now opens the questionnaire */}
-      <JoinSection onGetStarted={handleOpen} /> 
+      <JoinSection onGetStarted={handleOpenQuestionnaire} />
       <Footer />
 
-      {/* Questionnaire Modal */}
+      {/* Questionnaire + Signup Modal */}
       <Modal
         open={openQuestionnaire}
-        onClose={handleClose}
+        onClose={handleCloseQuestionnaire}
         sx={{
-          backdropFilter: "blur(0px)",
+          backdropFilter: "blur(2px)",
           backgroundColor: "rgba(0,0,0,0.4)",
         }}
       >
@@ -46,13 +57,50 @@ const HomePage = () => {
             justifyContent: "center",
           }}
         >
-          <QuestionnairePage
-            onFinish={() => {
-              handleClose();
-              navigate("/signup");
-            }}
-            onClose={handleClose}
-          />
+          {!showSignup ? (
+            <QuestionnairePage
+              onFinish={() => setShowSignup(true)}
+              onClose={handleCloseQuestionnaire}
+            />
+          ) : (
+            <Box
+              sx={{
+                width: 400,
+                backgroundColor: "white",
+                borderRadius: 3,
+                boxShadow: 5,
+                p: 3,
+                position: "relative",
+              }}
+            >
+              <Signup onClose={handleCloseQuestionnaire} />
+            </Box>
+          )}
+        </Box>
+      </Modal>
+
+      {/* Login Modal */}
+      <Modal
+        open={openLogin}
+        onClose={handleLoginClose}
+        sx={{
+          backdropFilter: "blur(2px)",
+          backgroundColor: "rgba(0,0,0,0.4)",
+        }}
+      >
+        <Box
+          sx={{
+            width: 400,
+            backgroundColor: "white",
+            borderRadius: 3,
+            boxShadow: 5,
+            p: 3,
+            mx: "auto",
+            mt: "10%",
+            position: "relative",
+          }}
+        >
+          <Login onClose={handleLoginClose} />
         </Box>
       </Modal>
     </>
