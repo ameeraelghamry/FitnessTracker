@@ -1,9 +1,46 @@
-import React from "react";
-import { AppBar, Toolbar, Button, Box } from "@mui/material";
+import React, { useEffect, useState } from "react";
+import { AppBar, Toolbar, Button, Box, IconButton, Menu, MenuItem } from "@mui/material";
 import { Link } from "react-router-dom";
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import FitVerseLogo from "../../assets/images/FitVerse.svg";
 
 const Header = ({ onLoginClick }) => {
+  const [user, setUser] = useState(null);
+  const [anchorEl, setAnchorEl] = useState(null);
+
+  // Check if user is logged in on component mount
+  useEffect(() => {
+    // ✅ Backend runs on port 5000 (same as Login API)
+    fetch("http://localhost:5000/api/auth/me", {
+      credentials: "include",
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.loggedIn) setUser(data.user);
+      })
+      .catch((err) => console.error(err));
+  }, []);
+
+  // Open user menu
+  const handleMenu = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  // Close user menu
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  // Logout function
+  const handleLogout = async () => {
+    await fetch("http://localhost:5000/api/auth/logout", {
+      method: "POST",
+      credentials: "include",
+    });
+    setUser(null);
+    handleClose();
+  };
+
   return (
     <AppBar
       position="absolute"
@@ -45,21 +82,45 @@ const Header = ({ onLoginClick }) => {
           </Button>
         </Box>
 
-        {/* Right CTA Button */}
-        <Button
-          variant="contained"
-          onClick={onLoginClick}
-          sx={{
-            backgroundColor: "#477CD8",
-            color: "#fff",
-            borderRadius: "20px",
-            padding: "6px 16px",
-            textTransform: "none",
-            "&:hover": { backgroundColor: "#0a1f44" },
-          }}
-        >
-          Login
-        </Button>
+        {/* Right Section: Login or Profile */}
+        <Box>
+          {user ? (
+            <>
+              <IconButton
+                size="large"
+                color="inherit"
+                component={Link}
+                to="/ProfilePage"
+                onClick={handleMenu}
+              >
+                <AccountCircleIcon />
+              </IconButton>
+              <Menu
+                anchorEl={anchorEl}
+                open={Boolean(anchorEl)}
+                onClose={handleClose}
+              >
+                <MenuItem disabled>Hello, {user.username}</MenuItem>
+                <MenuItem onClick={handleLogout}>Logout</MenuItem>
+              </Menu>
+            </>
+          ) : (
+            <Button
+              variant="contained"
+              onClick={onLoginClick}
+              sx={{
+                backgroundColor: "#477CD8",
+                color: "#fff",
+                borderRadius: "20px",
+                padding: "6px 16px",
+                textTransform: "none",
+                "&:hover": { backgroundColor: "#0a1f44" },
+              }}
+            >
+              Login
+            </Button>
+          )}
+        </Box>
       </Toolbar>
     </AppBar>
   );
