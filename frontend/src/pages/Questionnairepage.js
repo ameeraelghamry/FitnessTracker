@@ -5,26 +5,30 @@ import backgroundImage from "../assets/images/proimmm 4.svg";
 import introImage from "../assets/images/Image.svg";
 
 const questions = [
-  { text: "HOW OLD ARE YOU?" },
-  { text: "WHAT'S YOUR GENDER?", options: ["Male", "Female"] },
-  { text: "WHAT IS YOUR FITNESS GOAL?", options: ["Lose Weight", "Gain Muscle", "Stay Fit"] },
-  { text: "HOW MANY DAYS A WEEK DO YOU TRAIN?", options: [1, 2, 3, 4, 5, 6, 7] },
-  { text: "WHAT IS YOUR HEIGHT (CM)?" },
-  { text: "WHAT IS YOUR WEIGHT (KG)?" },
+  { id: "age", text: "HOW OLD ARE YOU?" },
+  { id: "gender", text: "WHAT'S YOUR GENDER?", options: ["Male", "Female"] },
+  { id: "fitnessGoal", text: "WHAT IS YOUR FITNESS GOAL?", options: ["Lose Weight", "Gain Muscle", "Stay Fit"] },
+  { id: "trainingDaysPerWeek", text: "HOW MANY DAYS A WEEK DO YOU TRAIN?", options: [1, 2, 3, 4, 5, 6, 7] },
+  { id: "heightCm", text: "WHAT IS YOUR HEIGHT (CM)?" },
+  { id: "weightKg", text: "WHAT IS YOUR WEIGHT (KG)?" },
   {
+    id: "equipment",
     text: "WHAT EQUIPMENTS DO YOU HAVE AVAILABLE?",
     options: ["Dumbbells or Kettlebells", "Barbells", "Machines or Cables", "Resistance Bands", "No Equipment"],
   },
   {
+    id: "targetZones",
     text: "WHAT ARE YOUR TARGET ZONES?",
     options: ["Arm", "Back", "Chest", "Abs", "Legs", "Glutes"],
   },
   {
+    id: "fitnessLevel",
     text: "WHAT IS YOUR FITNESS LEVEL?",
     options: ["New to Fitness", "Beginner", "Intermediate", "Advanced"],
   },
-  { text: "WHAT IS YOUR GOAL WEIGHT (KG)?" },
+  { id: "goalWeightKg", text: "WHAT IS YOUR GOAL WEIGHT (KG)?" },
   {
+    id: "workoutDuration",
     text: "WHAT IS A PERFECT LENGTH OF A WORKOUT FOR YOU?",
     options: ["15 min", "Up to 30 mins", "1 hour", "I'll do whatever it takes"],
   },
@@ -35,24 +39,88 @@ export default function QuestionnairePage({ onFinish, onClose }) {
   const [step, setStep] = useState(1);
   const [selected, setSelected] = useState(null);
   const [answers, setAnswers] = useState({});
+  const [error, setError] = useState("");
   const [submitted, setSubmitted] = useState(false);
 
   const totalSteps = questions.length;
   const currentQuestion = questions[step - 1];
 
-  const goNext = () => {
-    if (selected !== null) {
-      setAnswers((prev) => ({ ...prev, [currentQuestion.text]: selected }));
+  const goNext = (valueFromCard) => {
+    const value = valueFromCard !== undefined ? valueFromCard : selected;
+
+    // ❗ Basic validation for numeric questions
+    if (currentQuestion.id === "age") {
+      const age = Number(value);
+      if (!age || age < 18 || age > 100) {
+        setError("Please enter a valid age between 10 and 100.");
+        return;
+      }
+    }
+
+    if (currentQuestion.id === "heightCm") {
+      const height = Number(value);
+      if (!height || height < 100 || height > 250) {
+        setError("Please enter a valid height between 100 and 250 cm.");
+        return;
+      }
+    }
+
+    if (currentQuestion.id === "weightKg") {
+      const weight = Number(value);
+      if (!weight || weight < 30 || weight > 300) {
+        setError("Please enter a valid weight between 30 and 300 kg.");
+        return;
+      }
+    }
+
+    if (currentQuestion.id === "goalWeightKg") {
+      const goalWeight = Number(value);
+      const currentWeight = Number(answers.weightKg);
+      const goal = answers.fitnessGoal;
+
+      if (!goalWeight || goalWeight < 30 || goalWeight > 300) {
+        setError("Please enter a realistic goal weight between 30 and 300 kg.");
+        return;
+      }
+
+      // Validate goal weight based on fitness goal
+      if (goal === "Lose Weight") {
+        if (goalWeight >= currentWeight) {
+          setError(`Goal weight (${goalWeight} kg) must be less than your current weight (${currentWeight} kg) when your goal is to lose weight.`);
+          return;
+        }
+        if (goalWeight >= currentWeight * 0.95) {
+          setError("For weight loss, your goal weight should be at least 5% less than your current weight.");
+          return;
+        }
+      } else if (goal === "Gain Muscle") {
+        if (goalWeight <= currentWeight) {
+          setError(`Goal weight (${goalWeight} kg) must be greater than your current weight (${currentWeight} kg) when your goal is to gain muscle.`);
+          return;
+        }
+      }
+      // "Stay Fit" doesn't need strict validation - goal weight can be close to current weight
+    }
+
+    // Clear any previous error if validation passes
+    setError("");
+
+    // Build updated answers object including current selection
+    let updatedAnswers = answers;
+    if (value !== null && value !== undefined && currentQuestion.id) {
+      updatedAnswers = { ...answers, [currentQuestion.id]: value };
+      setAnswers(updatedAnswers);
     }
 
     if (step < totalSteps) {
       setStep((prev) => prev + 1);
       setSelected(null);
+      setError("");
     } else {
-      // Submit and trigger signup transition
+      // Submit and trigger signup transition, sending all answers up
       setSubmitted(true);
       setTimeout(() => {
-        if (onFinish) onFinish();
+        if (onFinish) onFinish(updatedAnswers);
       }, 1200);
     }
   };
@@ -178,6 +246,7 @@ export default function QuestionnairePage({ onFinish, onClose }) {
           question={currentQuestion}
           selected={selected}
           setSelected={setSelected}
+          error={error}
           handleNext={goNext}
           handleBack={handleBack}
           onClose={onClose}

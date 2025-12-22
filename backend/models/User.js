@@ -18,7 +18,7 @@ class User {
     db.query(
       "INSERT INTO users (username, email, password) VALUES (?, ?, ?)",
       [this.username, this.email, this.password],
-      callback
+      (err, result) => callback(err, result)
     );
   }
 }

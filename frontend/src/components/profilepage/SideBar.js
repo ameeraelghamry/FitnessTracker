@@ -1,8 +1,31 @@
 import React from 'react';
 import { Box, Typography, List, ListItem, ListItemIcon, ListItemText, Divider, Button } from '@mui/material';
 import { Home, FitnessCenter, Category, Settings, Notifications } from '@mui/icons-material';
+import { useNavigate } from 'react-router-dom';
 
 const Sidebar = () => {
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    try {
+      // Call logout API endpoint
+      await fetch("http://localhost:5000/api/auth/logout", {
+        method: "POST",
+        credentials: "include",
+      });
+      
+      // Clear localStorage
+      localStorage.removeItem("user");
+      
+      // Redirect to home page
+      navigate("/");
+    } catch (error) {
+      console.error("Logout error:", error);
+      // Even if API call fails, clear local storage and redirect
+      localStorage.removeItem("user");
+      navigate("/");
+    }
+  };
   const menuItems = [
     { text: 'Discover', icon: <Home /> },
     { text: 'Progress', icon: <FitnessCenter /> },
@@ -61,6 +84,7 @@ const Sidebar = () => {
       {/* Logout Button */}
       <Button
         variant="contained"
+        onClick={handleLogout}
         sx={{
           mt: 2,
           bgcolor: '#477CD8',

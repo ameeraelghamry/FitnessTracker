@@ -17,6 +17,7 @@ export default function QuestionCard({
   question,
   selected,
   setSelected,
+  error,
   handleNext,
   handleBack,
   onClose,
@@ -32,7 +33,7 @@ export default function QuestionCard({
 
   const isMultiSelect = [
     "WHAT ARE YOUR TARGET ZONES?",
-    "WHAT equipments do you have available ?",
+    "WHAT EQUIPMENTS DO YOU HAVE AVAILABLE?",
   ].includes(question.text);
 
   const handleSelect = (opt) => {
@@ -45,9 +46,11 @@ export default function QuestionCard({
       }
       setSelected(current);
     } else {
+      // Single-select questions: update state and immediately advance,
+      // passing the chosen value so it's not lost due to async state updates.
       setSelected(opt);
       if (!needsInput) {
-        setTimeout(() => handleNext(), 400);
+        handleNext(opt);
       }
     }
   };
@@ -176,6 +179,15 @@ export default function QuestionCard({
             </Box>
           ))
         )}
+
+        {error && (
+          <Typography
+            variant="body2"
+            sx={{ mt: 1, color: "error.main", textAlign: "left" }}
+          >
+            {error}
+          </Typography>
+        )}
       </Box>
 
       {/* Next Button */}
@@ -190,7 +202,7 @@ export default function QuestionCard({
             fontWeight: 600,
             ":hover": { backgroundColor: "#345de4" },
           }}
-          onClick={handleNext}
+          onClick={() => handleNext()}
           disabled={
             needsInput
               ? !selected

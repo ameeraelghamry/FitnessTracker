@@ -2,10 +2,15 @@ import AuthService from "../services/AuthService.js";
 
 class AuthController {
   async signup(req, res) {
-    const { username, email, password } = req.body;
+    const { username, email, password, questionnaire } = req.body;
 
     try {
-      const message = await AuthService.signup(username, email, password);
+      const message = await AuthService.signup(
+        username,
+        email,
+        password,
+        questionnaire
+      );
       res.status(201).json({ message });
     } catch (error) {
       res.status(400).json({ error });
