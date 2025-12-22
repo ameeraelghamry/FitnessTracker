@@ -13,7 +13,9 @@ class AuthController {
       );
       res.status(201).json({ message });
     } catch (error) {
-      res.status(400).json({ error });
+      const errorMessage = error?.message || error || "An error occurred";
+      console.error("Signup error:", error);
+      res.status(400).json({ error: errorMessage });
     }
   }
 
@@ -36,7 +38,9 @@ class AuthController {
       console.log("Login request body:", req.body);
 
     } catch (error) {
-      res.status(400).json({ error });
+      const errorMessage = error?.message || error || "An error occurred";
+      console.error("Login error:", error);
+      res.status(400).json({ error: errorMessage });
     }
   }
 

@@ -3,15 +3,15 @@ import cors from "cors";
 import bodyParser from "body-parser";
 import session from "express-session";
 import AuthRoutes from "../routes/AuthRoutes.js";
+import dotenv from "dotenv";
 
+dotenv.config();
 const app = express();
 
 // ===== CORS =====
 app.use(cors({
-  origin: 'http://localhost:5173', // Your Vite dev server port
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization']
+  origin: "http://localhost:5173", 
+  credentials: true, 
 }));
 
 // ===== Body Parser =====
