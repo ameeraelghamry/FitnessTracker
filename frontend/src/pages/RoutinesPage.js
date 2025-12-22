@@ -1,93 +1,128 @@
-import React, { useState } from 'react';
-import { Box, Typography, Grid, Button } from '@mui/material';
-import { Add } from '@mui/icons-material';
-import Sidebar from '../components/profilepage/SideBar';
-import CreateRoutineDialog from '../components/CreateRoutineDialog';
-import RoutineCard from '../components/RoutineCard';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Box, Grid, Typography, Snackbar, Alert } from '@mui/material';
+import { Description } from '@mui/icons-material';
+import CreateRoutineCard from '../components/profilepage/CreateRoutineCard';
+import RoutinesList from '../components/profilepage/RoutinesList';
+import CreateRoutineDialog from '../components/routines/CreateRoutineDialog';
+import { fetchRoutines, createRoutine, deleteRoutine } from '../services/routineService';
 
-export default function RoutinesPage() {
-  const [activeNav, setActiveNav] = useState('Routines');
-  const [openDialog, setOpenDialog] = useState(false);
-  const [routines, setRoutines] = useState([
-    {
-      id: 1,
-      name: 'Push and Upper',
-      exerciseCount: 8,
-      isFolder: false,
-      exercises: ['Bench Press', 'Shoulder Press', 'Tricep Dips', 'Cable Flyes'],
-    },
-    {
-      id: 2,
-      name: 'Leg Day',
-      exerciseCount: 6,
-      isFolder: false,
-      exercises: ['Squats', 'Leg Press', 'Lunges'],
-    },
-  ]);
+const RoutinesPage = () => {
+  const navigate = useNavigate();
+  const [routines, setRoutines] = useState([]);
+  const [createDialogOpen, setCreateDialogOpen] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' });
 
-  const handleCreateRoutine = (name, isFolder) => {
-    const newRoutine = {
-      id: routines.length + 1,
-      name,
-      exerciseCount: 0,
-      isFolder,
-      exercises: [],
-    };
-    setRoutines([...routines, newRoutine]);
+  useEffect(() => {
+    loadRoutines();
+  }, []);
+
+  const loadRoutines = async () => {
+    try {
+      const data = await fetchRoutines();
+      setRoutines(data);
+    } catch (err) {
+      showSnackbar('Failed to load routines', 'error');
+    }
+    setLoading(false);
   };
 
-  const handleDeleteRoutine = (id) => {
-    setRoutines(routines.filter((r) => r.id !== id));
+  const handleNewRoutine = () => {
+    setCreateDialogOpen(true);
+  };
+
+  const handleSaveRoutine = async (routineData) => {
+    try {
+      await createRoutine(routineData);
+      showSnackbar('Routine created successfully!', 'success');
+      loadRoutines();
+    } catch (err) {
+      console.error("Create routine error:", err);
+      showSnackbar(err.message || 'Failed to create routine', 'error');
+    }
+  };
+
+  const handleDeleteRoutine = async (routineId) => {
+    try {
+      await deleteRoutine(routineId);
+      showSnackbar('Routine deleted', 'success');
+      loadRoutines();
+    } catch (err) {
+      showSnackbar('Failed to delete routine', 'error');
+    }
+  };
+
+  const handleRoutineClick = (routineId) => {
+    navigate(`/routines/${routineId}`);
+  };
+
+  const handleMenuClick = (routineId, action) => {
+    if (action === 'delete') {
+      handleDeleteRoutine(routineId);
+    }
+  };
+
+  const showSnackbar = (message, severity) => {
+    setSnackbar({ open: true, message, severity });
   };
 
   return (
-    <Box display="flex" bgcolor="#0f172a" minHeight="100vh">
-      <Sidebar activeNav={activeNav} setActiveNav={setActiveNav} />
-      <Box flex={1} ml="260px" p={5}>
-        <Typography variant="h4" fontWeight={700} color="#f8fafc" mb={1}>
-          My Routines
-        </Typography>
-        <Typography variant="body1" color="#94a3b8" mb={4}>
-          Create and manage your workout routines
-        </Typography>
+    <Box
+      sx={{
+        minHeight: '100vh',
+        bgcolor: '#F9FAFB',
+        p: 4,
+      }}
+    >
+      <Typography 
+        variant="h4" 
+        sx={{ 
+          color: '#1F2937', 
+          fontWeight: 700, 
+          mb: 4 
+        }}
+      >
+        My Routines
+      </Typography>
 
-        <Box
-          bgcolor="#1e293b"
-          borderRadius={3}
-          p={3}
-          mb={5}
-          display="flex"
-          justifyContent="flex-start"
-        >
-          <Button
-            startIcon={<Add />}
-            onClick={() => setOpenDialog(true)}
-            sx={{
-              background: 'linear-gradient(to right, #3b82f6, #8b5cf6)',
-              color: '#fff',
-              fontWeight: 600,
-              px: 3,
-              '&:hover': { opacity: 0.9 },
-            }}
-          >
-            Create Routine
-          </Button>
-        </Box>
-
-        <Grid container spacing={3}>
-          {routines.map((routine) => (
-            <Grid item xs={12} sm={6} md={4} key={routine.id}>
-              <RoutineCard routine={routine} onDelete={handleDeleteRoutine} />
-            </Grid>
-          ))}
+      <Grid container spacing={2} sx={{ mb: 4 }}>
+        <Grid item xs={12} md={6}>
+          <CreateRoutineCard
+            onClick={handleNewRoutine}
+            icon={<Description sx={{ fontSize: 24 }} />}
+            text="New Routine"
+          />
         </Grid>
+      </Grid>
 
-        <CreateRoutineDialog
-          open={openDialog}
-          onClose={() => setOpenDialog(false)}
-          onCreateRoutine={handleCreateRoutine}
+      {loading ? (
+        <Typography sx={{ color: '#6B7280' }}>Loading routines...</Typography>
+      ) : (
+        <RoutinesList
+          routines={routines}
+          onRoutineClick={handleRoutineClick}
+          onMenuClick={handleMenuClick}
         />
-      </Box>
+      )}
+
+      <CreateRoutineDialog
+        open={createDialogOpen}
+        onClose={() => setCreateDialogOpen(false)}
+        onSave={handleSaveRoutine}
+      />
+
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={3000}
+        onClose={() => setSnackbar({ ...snackbar, open: false })}
+      >
+        <Alert severity={snackbar.severity} onClose={() => setSnackbar({ ...snackbar, open: false })}>
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
     </Box>
   );
-}
+};
+
+export default RoutinesPage;

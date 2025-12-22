@@ -1,13 +1,30 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Box, Typography, Button } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 import BackgroundImage from "../../assets/images/Group23.svg";
 
 const HeroSection = ({ onGetStarted }) => {
+  const navigate = useNavigate();
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    const user = localStorage.getItem('user');
+    setIsLoggedIn(!!user);
+  }, []);
+
+  const handleClick = () => {
+    if (isLoggedIn) {
+      navigate('/routines');
+    } else {
+      onGetStarted();
+    }
+  };
+
   return (
     <Box
       sx={{
         position: "relative",
-        height: "70vh", // smaller height
+        height: "70vh",
         backgroundImage: `url(${BackgroundImage})`,
         backgroundSize: "cover",
         backgroundPosition: "center",
@@ -32,7 +49,7 @@ const HeroSection = ({ onGetStarted }) => {
         </Typography>
         <Typography variant="body1" mb={3} fontSize="1.1rem">
           Through Personalized Coaching, Cutting Edge Techniques, and Support —
-          We’ll Help You Reach Your Fitness Goals.
+          We'll Help You Reach Your Fitness Goals.
         </Typography>
         <Button
           variant="contained"
@@ -41,9 +58,9 @@ const HeroSection = ({ onGetStarted }) => {
             "&:hover": { backgroundColor: "#0039cb" },
             width: "180px",
           }}
-          onClick={onGetStarted}
+          onClick={handleClick}
         >
-          Get Started
+          {isLoggedIn ? "My Routines" : "Get Started"}
         </Button>
       </Box>
     </Box>

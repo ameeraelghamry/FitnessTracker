@@ -25,8 +25,9 @@ class AuthController {
     try {
       const user = await AuthService.login(email, password);
 
-      // ✅ Save user in session
+      // ✅ Save user in session (including id for routines)
       req.session.user = {
+        id: user.id,
         email,
         username: user.username,
       };

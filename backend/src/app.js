@@ -3,6 +3,9 @@ import cors from "cors";
 import bodyParser from "body-parser";
 import session from "express-session";
 import AuthRoutes from "../routes/AuthRoutes.js";
+import routineRoutes from "../routes/routineRoutes.js";
+import exerciseRoutes from "../routes/exerciseRoutes.js";
+import userRoutes from "../routes/userRoutes.js";
 import dotenv from "dotenv";
 
 dotenv.config();
@@ -30,6 +33,14 @@ app.use(session({
 
 // ===== Routes =====
 app.use("/api/auth", AuthRoutes);
+app.use("/api/routines", routineRoutes);
+app.use("/api/exercises", exerciseRoutes);
+app.use("/api/user", userRoutes);
+
+// Debug route
+app.get("/api/test", (req, res) => {
+  res.json({ message: "API is working" });
+});
 
 // ===== Start Server =====
 app.listen(5000, () => console.log("🚀 Server running on port 5000"));

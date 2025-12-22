@@ -1,18 +1,27 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, Typography, Box, Chip } from '@mui/material';
-import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { fetchRoutines } from '../../services/routineService';
 
-const WorkoutChart = ({ data }) => {
-  const [selectedView, setSelectedView] = useState('Duration');
+const WorkoutChart = () => {
+  const [routineData, setRoutineData] = useState([]);
+  const [selectedView, setSelectedView] = useState('Exercises');
 
-  const getChartData = () => {
-    switch (selectedView) {
-      case 'Volume':
-        return data.map(d => ({ ...d, value: d.volume }));
-      case 'Reps':
-        return data.map(d => ({ ...d, value: d.reps }));
-      default:
-        return data.map(d => ({ ...d, value: d.duration }));
+  useEffect(() => {
+    loadRoutineData();
+  }, []);
+
+  const loadRoutineData = async () => {
+    try {
+      const routines = await fetchRoutines();
+      const chartData = routines.slice(0, 6).map(routine => ({
+        name: routine.name.length > 12 ? routine.name.substring(0, 12) + '...' : routine.name,
+        exercises: routine.exercise_count || 0,
+        fullName: routine.name
+      }));
+      setRoutineData(chartData);
+    } catch (err) {
+      console.error('Failed to load routine data:', err);
     }
   };
 
@@ -28,56 +37,59 @@ const WorkoutChart = ({ data }) => {
       <CardContent sx={{ p: 4 }}>
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3, flexWrap: 'wrap', gap: 2 }}>
           <Typography variant="h6" fontWeight="bold" color="text.primary">
-            Workout Activity
+            Routines Overview
           </Typography>
-          <Box sx={{ display: 'flex', gap: 1 }}>
-            {['Duration', 'Volume', 'Reps'].map((view) => (
-              <Chip
-                key={view}
-                label={view}
-                onClick={() => setSelectedView(view)}
-                sx={{
-                  bgcolor: selectedView === view ? '#667eea' : '#e5e7eb',
-                  color: selectedView === view ? 'white' : 'text.secondary',
-                  fontWeight: 600,
-                  borderRadius: 3,
-                  '&:hover': {
-                    bgcolor: selectedView === view ? '#5568d3' : '#d1d5db',
-                  },
-                }}
-              />
-            ))}
-          </Box>
+          <Chip
+            label="Exercises per Routine"
+            sx={{
+              bgcolor: '#667eea',
+              color: 'white',
+              fontWeight: 600,
+              borderRadius: 3,
+            }}
+          />
         </Box>
 
-        <ResponsiveContainer width="100%" height={300}>
-          <AreaChart data={getChartData()}>
-            <defs>
-              <linearGradient id="colorValue" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="#667eea" stopOpacity={0.3} />
-                <stop offset="95%" stopColor="#667eea" stopOpacity={0} />
-              </linearGradient>
-            </defs>
-            <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-            <XAxis dataKey="date" stroke="#6b7280" />
-            <YAxis stroke="#6b7280" />
-            <Tooltip
-              contentStyle={{
-                background: 'white',
-                border: 'none',
-                borderRadius: '12px',
-                boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
-              }}
-            />
-            <Area
-              type="monotone"
-              dataKey="value"
-              stroke="#667eea"
-              strokeWidth={3}
-              fill="url(#colorValue)"
-            />
-          </AreaChart>
-        </ResponsiveContainer>
+        {routineData.length === 0 ? (
+          <Box sx={{ 
+            height: 300, 
+            display: 'flex', 
+            alignItems: 'center', 
+            justifyContent: 'center',
+            color: '#6b7280'
+          }}>
+            <Typography>No routines yet. Create your first routine!</Typography>
+          </Box>
+        ) : (
+          <ResponsiveContainer width="100%" height={300}>
+            <BarChart data={routineData}>
+              <defs>
+                <linearGradient id="colorBar" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="#667eea" stopOpacity={0.9} />
+                  <stop offset="95%" stopColor="#764ba2" stopOpacity={0.9} />
+                </linearGradient>
+              </defs>
+              <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+              <XAxis dataKey="name" stroke="#6b7280" fontSize={12} />
+              <YAxis stroke="#6b7280" allowDecimals={false} />
+              <Tooltip
+                contentStyle={{
+                  background: 'white',
+                  border: 'none',
+                  borderRadius: '12px',
+                  boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+                }}
+                formatter={(value, name, props) => [value, 'Exercises']}
+                labelFormatter={(label, payload) => payload[0]?.payload?.fullName || label}
+              />
+              <Bar
+                dataKey="exercises"
+                fill="url(#colorBar)"
+                radius={[8, 8, 0, 0]}
+              />
+            </BarChart>
+          </ResponsiveContainer>
+        )}
       </CardContent>
     </Card>
   );

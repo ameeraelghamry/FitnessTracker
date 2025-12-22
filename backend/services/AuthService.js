@@ -46,6 +46,7 @@ class AuthService {
         if (!match) return reject("Invalid credentials");
 
         resolve({
+          id: user.id,
           username: user.username,
         });
       });

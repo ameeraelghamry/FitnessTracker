@@ -1,12 +1,28 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, Box, Avatar, Typography, Button, Grid, Paper } from '@mui/material';
-import { FitnessCenter, CalendarToday, TrendingUp } from '@mui/icons-material';
+import { FitnessCenter, CalendarToday, FitnessCenterOutlined } from '@mui/icons-material';
+import { fetchUserStats } from '../../services/routineService';
 
 const ProfileHeader = ({ user }) => {
-  const stats = [
-    { label: 'Workouts', value: '25', icon: <FitnessCenter /> },
-    { label: 'Plans', value: '2', icon: <CalendarToday /> },
-    { label: 'Progress', value: '5', icon: <TrendingUp /> },
+  const [stats, setStats] = useState({ plans_count: 0, exercises_count: 0, total_sets: 0 });
+
+  useEffect(() => {
+    loadStats();
+  }, []);
+
+  const loadStats = async () => {
+    try {
+      const data = await fetchUserStats();
+      setStats(data);
+    } catch (err) {
+      console.error('Failed to load stats:', err);
+    }
+  };
+
+  const statCards = [
+    { label: 'Exercises', value: stats.exercises_count.toString(), icon: <FitnessCenter /> },
+    { label: 'Plans', value: stats.plans_count.toString(), icon: <CalendarToday /> },
+    { label: 'Total Sets', value: stats.total_sets.toString(), icon: <FitnessCenterOutlined /> },
   ];
 
   return (
@@ -61,7 +77,7 @@ const ProfileHeader = ({ user }) => {
         </Box>
 
         <Grid container spacing={3}>
-          {stats.map((stat, idx) => (
+          {statCards.map((stat, idx) => (
             <Grid item xs={12} sm={4} key={idx}>
               <Paper
                 sx={{

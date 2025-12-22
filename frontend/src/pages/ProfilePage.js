@@ -16,28 +16,6 @@ const ProfilePage = () => {
     }
   }, []);
 
-  const workoutData = [
-    { date: "Jul 26", duration: 3.5, volume: 4200, reps: 45 },
-    { date: "Aug 9", duration: 1.8, volume: 3100, reps: 38 },
-    { date: "Aug 9", duration: 2.8, volume: 3800, reps: 42 },
-    { date: "Aug 9", duration: 1.3, volume: 2500, reps: 30 },
-    { date: "Aug 23", duration: 5.2, volume: 5600, reps: 52 },
-    { date: "Sep 6", duration: 2.1, volume: 3400, reps: 40 },
-    { date: "Sep 6", duration: 2.3, volume: 3500, reps: 41 },
-    { date: "Sep 6", duration: 2.2, volume: 3300, reps: 39 },
-  ];
-
-  const recentWorkouts = [
-    {
-      name: "Push and Upper",
-      date: "Friday, Sep 19, 2025",
-      time: "54min",
-      volume: "2,076 kg",
-      records: 6,
-      exercises: ["Elliptical Trainer", "Bench Press", "Shoulder Press"],
-    },
-  ];
-
   return (
     <Box
       sx={{
@@ -92,7 +70,7 @@ const ProfilePage = () => {
             }}
           />
 
-          <WorkoutChart data={workoutData} accentColor="#477CD8" />
+          <WorkoutChart />
 
           <Divider sx={{ my: 3, borderColor: "rgba(255,255,255,0.1)" }} />
 
@@ -100,7 +78,7 @@ const ProfilePage = () => {
 
           <Divider sx={{ my: 3, borderColor: "rgba(255,255,255,0.1)" }} />
 
-          <RecentWorkouts workouts={recentWorkouts} />
+          <RecentWorkouts />
         </Container>
       </Box>
     </Box>
