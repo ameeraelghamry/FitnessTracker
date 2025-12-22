@@ -7,30 +7,20 @@ import {
     CardMedia,
     CardContent,
     Typography,
-    CardActions,
-    Button,
 } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 
 export default function ExercisesSection() {
     const [exercises, setExercises] = useState([]);
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchExercises = async () => {
-            const options = {
-                method: "GET",
-                url: "https://www.exercisedb.dev/api/v1/exercises?limit=28",
-            };
-
             try {
-                const { data } = await axios.request(options);
-                console.log("API Response:", data);
-
-                if (Array.isArray(data.data)) {
-                    setExercises(data.data);
-                } else {
-                    console.error("Unexpected API structure:", data);
-                    setExercises([]);
-                }
+                const { data } = await axios.get(
+                    "https://www.exercisedb.dev/api/v1/exercises?limit=28"
+                );
+                setExercises(data.data || []);
             } catch (error) {
                 console.error("Error fetching exercises:", error);
             }
@@ -39,32 +29,47 @@ export default function ExercisesSection() {
         fetchExercises();
     }, []);
 
+    const handleExerciseClick = (exercise) => {
+        navigate(`/exercise/${exercise.id}`, { state: { exercise } });
+    };
+
     return (
         <Grid container spacing={3} sx={{ p: 4 }}>
             {exercises.map((exercise, idx) => (
-                <Grid item xs={12} sm={6} md={3} key={exercise.exerciseId ?? idx}>
+                <Grid item xs={12} sm={6} md={3} key={exercise.id ?? idx}>
                     <Card
                         sx={{
                             height: "100%",
                             background: "#1A1A1A",
                             boxShadow: 3,
+                            display: "flex",
+                            flexDirection: "column",
                             transition: "transform 0.3s",
                             "&:hover": { transform: "scale(1.05)" },
                         }}
                     >
-                        <CardActionArea>
+                        <CardActionArea
+                            sx={{ flexGrow: 1 }}
+                            onClick={() => handleExerciseClick(exercise)}
+                        >
                             <CardMedia
                                 component="img"
-                                sx={{ height: 180 }}
-                                image={exercise.gifUrl || ""}
+                                height="180"
+                                image={
+                                    exercise.gifUrl ||
+                                    "https://via.placeholder.com/300x180?text=Exercise"
+                                }
                                 alt={exercise.name}
-                                onError={(e) => (e.target.style.display = "none")}
+                                onError={(e) => {
+                                    e.target.src =
+                                        "https://via.placeholder.com/300x180?text=Exercise";
+                                }}
                             />
-                            <CardContent>
+                            <CardContent sx={{ flexGrow: 1 }}>
                                 <Typography
                                     gutterBottom
                                     variant="h6"
-                                    sx={{ color: "#fff", textTransform: "capitalize" }}
+                                    sx={{ color: "#fff", textTransform: "capitalize", minHeight: 56 }}
                                 >
                                     {exercise.name}
                                 </Typography>
@@ -76,11 +81,6 @@ export default function ExercisesSection() {
                                 </Typography>
                             </CardContent>
                         </CardActionArea>
-                        <CardActions>
-                            <Button size="small" color="primary">
-                                Start
-                            </Button>
-                        </CardActions>
                     </Card>
                 </Grid>
             ))}

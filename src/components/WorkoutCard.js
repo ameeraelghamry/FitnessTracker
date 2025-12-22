@@ -1,14 +1,24 @@
 import React from 'react';
 import { Card, CardContent, Box, Typography, Chip } from '@mui/material';
 import { EmojiEvents } from '@mui/icons-material';
+import { useNavigate } from 'react-router-dom';
 
 const WorkoutCard = ({ workout }) => {
+  const navigate = useNavigate();
+
+  const handleExerciseClick = (exercise) => {
+    // Pass the full exercise object in state
+    navigate(`/exercise/${exercise.id}`, { state: { exercise } });
+  };
+
+
   return (
     <Card
       sx={{
         borderRadius: 4,
         background: 'white',
         transition: 'all 0.3s ease',
+        cursor: 'pointer',
         '&:hover': {
           transform: 'translateY(-8px)',
           boxShadow: '0 12px 32px rgba(0,0,0,0.15)',
@@ -55,9 +65,10 @@ const WorkoutCard = ({ workout }) => {
           {workout.exercises.slice(0, 2).map((exercise, i) => (
             <Chip
               key={i}
-              label={exercise}
+              label={exercise.name}
               size="small"
-              sx={{ mr: 1, mb: 1, bgcolor: '#f3f4f6' }}
+              sx={{ mr: 1, mb: 1, bgcolor: '#f3f4f6', cursor: 'pointer' }}
+              onClick={() => handleExerciseClick(exercise)}
             />
           ))}
           {workout.exercises.length > 2 && (
