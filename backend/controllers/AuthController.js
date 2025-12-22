@@ -30,13 +30,23 @@ class AuthController {
         id: user.id,
         email,
         username: user.username,
+        role: user.role,
       };
 
-      res.json({
+      console.log(`✅ Session saved for ${email}: role = "${user.role}"`);
+      console.log("📋 Login request body:", req.body);
+
+      const response = {
         message: `Welcome, ${user.username}!`,
         username: user.username,
-      });
-      console.log("Login request body:", req.body);
+        email: user.email,
+        role: user.role || "User", // Make sure role is included in response
+      };
+      
+      console.log(`📤 Login response being sent:`, JSON.stringify(response, null, 2));
+      console.log(`📤 Role value: "${user.role}" (type: ${typeof user.role})`);
+      
+      res.json(response);
 
     } catch (error) {
       const errorMessage = error?.message || error || "An error occurred";

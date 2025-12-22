@@ -6,6 +6,7 @@ import AuthRoutes from "../routes/AuthRoutes.js";
 import routineRoutes from "../routes/routineRoutes.js";
 import exerciseRoutes from "../routes/exerciseRoutes.js";
 import userRoutes from "../routes/userRoutes.js";
+import AdminRoutes from "../routes/AdminRoutes.js";
 import dotenv from "dotenv";
 
 dotenv.config();
@@ -27,20 +28,24 @@ app.use(session({
   saveUninitialized: false,
   cookie: {
     httpOnly: true,
-    maxAge: 1000 * 60 * 60, // 1 hour
+    maxAge: 1000 * 60 * 60,
   },
 }));
 
+// ===== Debug Route =====
+app.get("/api/test", (req, res) => {
+  console.log("✅ Test route hit!");
+  res.json({ message: "Server is working!" });
+});
+
 // ===== Routes =====
+console.log("📌 Registering routes...");
 app.use("/api/auth", AuthRoutes);
 app.use("/api/routines", routineRoutes);
 app.use("/api/exercises", exerciseRoutes);
 app.use("/api/user", userRoutes);
-
-// Debug route
-app.get("/api/test", (req, res) => {
-  res.json({ message: "API is working" });
-});
+app.use("/api/admin", AdminRoutes);
+console.log("✅ All routes registered");
 
 // ===== Start Server =====
 app.listen(5000, () => console.log("🚀 Server running on port 5000"));
