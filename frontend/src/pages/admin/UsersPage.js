@@ -58,7 +58,9 @@ const UsersPage = () => {
       setError(null);
       console.log("Fetching users from:", `${API_BASE_URL}/users`);
       
-      const response = await fetch(`${API_BASE_URL}/users`);
+      const response = await fetch(`${API_BASE_URL}/users`, {
+        credentials: "include",
+      });
       if (!response.ok) {
         throw new Error("Failed to fetch users");
       }
@@ -93,6 +95,7 @@ const UsersPage = () => {
         headers: {
           "Content-Type": "application/json",
         },
+        credentials: "include",
         body: JSON.stringify({
           name: newUser.name,
           email: newUser.email,
@@ -131,6 +134,7 @@ const UsersPage = () => {
     try {
       const response = await fetch(`${API_BASE_URL}/users/${userId}`, {
         method: "DELETE",
+        credentials: "include",
       });
       if (!response.ok) {
         throw new Error("Failed to delete user");
@@ -146,7 +150,9 @@ const UsersPage = () => {
   const fetchUserWorkouts = async (userId) => {
     try {
       setLoadingWorkouts(true);
-      const response = await fetch(`${API_BASE_URL}/users/${userId}/workouts`);
+      const response = await fetch(`${API_BASE_URL}/users/${userId}/workouts`, {
+        credentials: "include",
+      });
       if (!response.ok) {
         throw new Error("Failed to fetch workout stats");
       }
@@ -185,6 +191,7 @@ const UsersPage = () => {
           headers: {
             "Content-Type": "application/json",
           },
+          credentials: "include",
           body: JSON.stringify({ status: selectedUser.status }),
         });
         if (!response.ok) {

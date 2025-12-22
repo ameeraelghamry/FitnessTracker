@@ -40,7 +40,7 @@ class AuthController {
         message: `Welcome, ${user.username}!`,
         username: user.username,
         email: user.email,
-        role: user.role || "User", // Make sure role is included in response
+        role: user.role || "Member", // Default to Member if no role
       };
       
       console.log(`📤 Login response being sent:`, JSON.stringify(response, null, 2));

@@ -1,11 +1,24 @@
 import React from 'react';
 import { Box, Typography, List, ListItem, ListItemIcon, ListItemText, Divider, Button } from '@mui/material';
-import { Home, FitnessCenter, Person, Settings, Explore } from '@mui/icons-material';
+import { Home, FitnessCenter, Person, Settings, Explore, AdminPanelSettings } from '@mui/icons-material';
 import { useNavigate, useLocation } from 'react-router-dom';
 
 const Sidebar = () => {
   const navigate = useNavigate();
   const location = useLocation();
+
+  // Get user role from localStorage
+  const getUser = () => {
+    try {
+      const user = localStorage.getItem("user");
+      return user ? JSON.parse(user) : null;
+    } catch {
+      return null;
+    }
+  };
+
+  const user = getUser();
+  const isAdmin = user?.role?.toLowerCase() === "admin";
 
   const handleLogout = async () => {
     try {
@@ -28,6 +41,8 @@ const Sidebar = () => {
     { text: 'Exercises', icon: <FitnessCenter />, path: '/exercises' },
     { text: 'Profile', icon: <Person />, path: '/ProfilePage' },
     { text: 'Settings', icon: <Settings />, path: '/settings' },
+    // Admin-only menu item
+    ...(isAdmin ? [{ text: 'Admin Panel', icon: <AdminPanelSettings />, path: '/admin' }] : []),
   ];
 
   return (

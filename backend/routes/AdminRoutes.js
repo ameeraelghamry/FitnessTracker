@@ -1,5 +1,6 @@
 import express from "express";
 import AdminController from "../controllers/AdminController.js";
+import { requireAdmin } from "../src/middleware/authMiddleware.js";
 
 const router = express.Router();
 
@@ -7,6 +8,9 @@ const router = express.Router();
 const asyncHandler = (fn) => (req, res, next) => {
   Promise.resolve(fn(req, res, next)).catch(next);
 };
+
+// Apply requireAdmin middleware to all admin routes
+router.use(requireAdmin);
 
 // Test route
 router.get("/test", (req, res) => {
@@ -42,4 +46,3 @@ router.delete("/users/:userId", asyncHandler((req, res) => AdminController.delet
 router.put("/users/:userId/status", asyncHandler((req, res) => AdminController.updateUserStatus(req, res)));
 
 export default router;
-

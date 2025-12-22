@@ -5,6 +5,7 @@ import { Box } from "@mui/material";
 
 // Components
 import Sidebar from "./components/profilepage/SideBar";
+import { AdminRoute } from "./components/common/ProtectedRoute";
 
 // User Pages
 import Home from "./pages/HomePage";
@@ -50,7 +51,7 @@ const App = () => {
   if (isAdminRoute) {
     return (
       <Routes>
-        <Route path="/admin" element={<AdminLayout />}>
+        <Route path="/admin" element={<AdminRoute><AdminLayout /></AdminRoute>}>
           <Route index element={<DashboardPage />} />
           <Route path="users" element={<UsersPage />} />
           <Route path="workouts" element={<WorkoutsPage />} />
