@@ -11,7 +11,6 @@
     "axios": "^1.12.2",
     "embla-carousel-react": "^8.6.0",
     "es-toolkit": "^1.40.0",
-    "express-session": "^1.18.2",
     "formik": "^2.4.6",
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
@@ -27,9 +26,8 @@
     "yup": "^1.7.1"
   },
   "scripts": {
-    "start": "concurrently \"npm run start-frontend\" \"npm run start-backend\"",
+    "start": "set PORT=3002 && react-scripts start",
     "start-backend": "cd backend && node src/server.js",
-    "start-frontend": "cd frontend && react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
