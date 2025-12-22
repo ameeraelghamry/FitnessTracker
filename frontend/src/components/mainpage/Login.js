@@ -39,15 +39,46 @@ function Login({ onClose }) {
       return;
     }
 
-    localStorage.setItem(
-      "user",
-      JSON.stringify({ username: data.username || email })
-    );
+    const userData = {
+      username: data.username || email,
+      email: data.email || email,
+      role: data.role || "User"
+    };
+    
+    // Save to localStorage first
+    localStorage.setItem("user", JSON.stringify(userData));
+    
+    console.log("✅ Login successful! User data:", userData);
+    console.log("📋 User role from server:", data.role);
+    console.log("📋 User role in localStorage:", userData.role);
+    console.log("🔍 DEBUG - Full login response:", JSON.stringify(data, null, 2));
 
     alert(data.message || "Login successful!");
     resetForm();
 
-    navigate("/ProfilePage");
+    // Redirect based on database role (case-insensitive check)
+    const userRole = (data.role || userData.role || "User").trim();
+    const normalizedRole = userRole.toLowerCase();
+    const isAdmin = normalizedRole === "admin";
+    const isUser = normalizedRole === "user" || !isAdmin;
+    
+    console.log(`🔀 REDIRECT DECISION:`);
+    console.log(`   - Role from server: "${data.role}"`);
+    console.log(`   - Role in localStorage: "${userData.role}"`);
+    console.log(`   - Normalized role: "${normalizedRole}"`);
+    console.log(`   - Is Admin: ${isAdmin}`);
+    console.log(`   - Is User: ${isUser}`);
+    
+    // Small delay to ensure localStorage is saved
+    setTimeout(() => {
+      if (isAdmin) {
+        console.log("➡️ REDIRECTING TO: /admin (Admin Dashboard)");
+        window.location.href = "/admin";
+      } else {
+        console.log("➡️ REDIRECTING TO: /ProfilePage (User Profile)");
+        window.location.href = "/ProfilePage";
+      }
+    }, 100);
   } catch (err) {
     console.error("Login error:", err);
     setError("Server error. Please try again later.");
