@@ -8,8 +8,17 @@ const HeroSection = ({ onGetStarted }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   useEffect(() => {
-    const user = localStorage.getItem('user');
-    setIsLoggedIn(!!user);
+    // Check login state from backend (same as Header)
+    fetch("http://localhost:5000/api/auth/me", {
+      credentials: "include",
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        setIsLoggedIn(data.loggedIn === true);
+      })
+      .catch(() => {
+        setIsLoggedIn(false);
+      });
   }, []);
 
   const handleClick = () => {

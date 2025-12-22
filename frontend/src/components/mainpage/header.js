@@ -37,8 +37,10 @@ const Header = ({ onLoginClick }) => {
       method: "POST",
       credentials: "include",
     });
+    localStorage.removeItem("user");
     setUser(null);
     handleClose();
+    window.location.reload(); // Refresh to update all components
   };
 
   return (

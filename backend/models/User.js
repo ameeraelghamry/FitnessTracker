@@ -25,6 +25,11 @@ class User {
     db.query("SELECT * FROM users WHERE email = ?", [email], callback);
   }
 
+  static findByUsername(username, callback) {
+    const db = Database.getConnection();
+    db.query("SELECT * FROM users WHERE username = ?", [username], callback);
+  }
+
   static findById(id, callback) {
     const db = Database.getConnection();
     db.query("SELECT * FROM users WHERE id = ?", [id], callback);

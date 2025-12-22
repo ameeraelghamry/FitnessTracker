@@ -5,13 +5,29 @@ class AuthController {
     const { username, email, password, questionnaire } = req.body;
 
     try {
-      const message = await AuthService.signup(
+      const user = await AuthService.signup(
         username,
         email,
         password,
         questionnaire
       );
-      res.status(201).json({ message });
+
+      // Auto-login: Save user in session
+      req.session.user = {
+        id: user.id,
+        email: user.email,
+        username: user.username,
+        role: user.role,
+      };
+
+      console.log(`✅ Signup + auto-login for ${email}: role = "${user.role}"`);
+
+      res.status(201).json({
+        message: `Welcome, ${user.username}!`,
+        username: user.username,
+        email: user.email,
+        role: user.role,
+      });
     } catch (error) {
       const errorMessage = error?.message || error || "An error occurred";
       console.error("Signup error:", error);

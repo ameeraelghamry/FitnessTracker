@@ -25,6 +25,7 @@ function Signup({ onClose, questionnaire }) {
       const res = await fetch("http://localhost:5000/api/auth/signup", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        credentials: "include", // Important for session cookie
         body: JSON.stringify({ username, email, password, questionnaire }),
       });
 
@@ -35,8 +36,23 @@ function Signup({ onClose, questionnaire }) {
         return;
       }
 
+      // Save user data to localStorage (auto-login)
+      const userData = {
+        username: data.username || username,
+        email: data.email || email,
+        role: data.role || "Member"
+      };
+      localStorage.setItem("user", JSON.stringify(userData));
+
+      console.log("✅ Signup successful! Auto-logged in:", userData);
+
       alert(data.message || "Account created successfully!");
       resetForm();
+
+      // Redirect to profile page (new members go to ProfilePage)
+      setTimeout(() => {
+        window.location.href = "/ProfilePage";
+      }, 100);
     } catch (err) {
       setError("Server error. Please try again later.");
     }
@@ -45,12 +61,20 @@ function Signup({ onClose, questionnaire }) {
   const validationSchema = Yup.object({
     username: Yup.string()
       .min(3, "Username must be at least 3 characters")
+      .max(30, "Username cannot exceed 30 characters")
+      .matches(/^[a-zA-Z0-9_]+$/, "Username can only contain letters, numbers, and underscores")
       .required("Username is required"),
     email: Yup.string()
       .email("Invalid email address")
+      .matches(/^[^\s@]+@[^\s@]+\.[^\s@]+$/, "Please enter a valid email")
       .required("Email is required"),
     password: Yup.string()
-      .min(6, "Password must be at least 6 characters")
+      .min(8, "Password must be at least 8 characters")
+      .max(50, "Password cannot exceed 50 characters")
+      .matches(/[a-z]/, "Password must contain at least one lowercase letter")
+      .matches(/[A-Z]/, "Password must contain at least one uppercase letter")
+      .matches(/[0-9]/, "Password must contain at least one number")
+      .matches(/[!@#$%^&*(),.?":{}|<>]/, "Password must contain at least one special character (!@#$%^&*)")
       .required("Password is required"),
   });
 
