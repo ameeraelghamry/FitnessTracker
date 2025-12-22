@@ -2,6 +2,7 @@ import React from 'react';
 import { Card, CardContent, Box, Typography, Chip } from '@mui/material';
 import { EmojiEvents } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
+import SocialShare from './common/SocialShare';
 
 const WorkoutCard = ({ workout }) => {
   const navigate = useNavigate();
@@ -10,7 +11,6 @@ const WorkoutCard = ({ workout }) => {
     // Pass the full exercise object in state
     navigate(`/exercise/${exercise.id}`, { state: { exercise } });
   };
-
 
   return (
     <Card
@@ -26,16 +26,24 @@ const WorkoutCard = ({ workout }) => {
       }}
     >
       <CardContent sx={{ p: 3 }}>
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
           <Typography variant="h6" fontWeight="bold">
             {workout.name}
           </Typography>
-          <Chip
-            icon={<EmojiEvents />}
-            label={workout.records}
-            size="small"
-            sx={{ bgcolor: '#fef3c7', color: '#92400e', fontWeight: 600 }}
-          />
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            <SocialShare 
+              title={`Check out my ${workout.name} workout!`}
+              text={`Just completed ${workout.name}! ${workout.volume} volume in ${workout.time}. 💪 #FitVerse`}
+              hashtags={["fitness", "workout", "FitVerse", "gym"]}
+              size="small"
+            />
+            <Chip
+              icon={<EmojiEvents />}
+              label={workout.records}
+              size="small"
+              sx={{ bgcolor: '#fef3c7', color: '#92400e', fontWeight: 600 }}
+            />
+          </Box>
         </Box>
 
         <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>

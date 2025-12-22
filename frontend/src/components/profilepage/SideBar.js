@@ -1,7 +1,8 @@
-import React from 'react';
-import { Box, Typography, List, ListItem, ListItemIcon, ListItemText, Divider, Button } from '@mui/material';
+import React, { useState } from 'react';
+import { Box, Typography, List, ListItem, ListItemIcon, ListItemText, Divider, Button, Badge, Menu, MenuItem, IconButton } from '@mui/material';
 import { Home, FitnessCenter, Category, Settings, Notifications } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
+import NotificationBell from '../common/NotificationBell';
 
 const Sidebar = () => {
   const navigate = useNavigate();
@@ -26,13 +27,13 @@ const Sidebar = () => {
       navigate("/");
     }
   };
+
   const menuItems = [
-    { text: 'Discover', icon: <Home /> },
-    { text: 'Progress', icon: <FitnessCenter /> },
-    { text: 'Workouts', icon: <FitnessCenter /> },
-    { text: 'Categories', icon: <Category /> },
-    { text: 'Settings', icon: <Settings /> },
-    { text: 'Notifications', icon: <Notifications /> },
+    { text: 'Discover', icon: <Home />, path: '/' },
+    { text: 'Progress', icon: <FitnessCenter />, path: '/profile' },
+    { text: 'Workouts', icon: <FitnessCenter />, path: '/workouts' },
+    { text: 'Categories', icon: <Category />, path: '/bodypart' },
+    { text: 'Settings', icon: <Settings />, path: '/settings' },
   ];
 
   return (
@@ -50,27 +51,36 @@ const Sidebar = () => {
       }}
     >
       {/* Logo */}
-      <Typography
-  variant="h3"
-  sx={{
-    color: '#477CD8',
-    fontFamily: 'Inter, Poppins, sans-serif',  
-    fontWeight: 900,                           
-    fontSize: '2.2rem',                       
-    textAlign: 'left',
-    mb: 5,
-    letterSpacing: '0.5px',                   
-  }}
->
-  FitVerse
-</Typography>
-
+      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 5 }}>
+        <Typography
+          variant="h3"
+          sx={{
+            color: '#477CD8',
+            fontFamily: 'Inter, Poppins, sans-serif',  
+            fontWeight: 900,                           
+            fontSize: '2.2rem',                       
+            letterSpacing: '0.5px',                   
+          }}
+        >
+          FitVerse
+        </Typography>
+        <NotificationBell />
+      </Box>
 
       {/* Menu Items */}
       <List sx={{ flexGrow: 1 }}>
         {menuItems.map((item, index) => (
           <React.Fragment key={index}>
-            <ListItem button sx={{ color: '#E5E7EB', borderRadius: 1 }}>
+            <ListItem 
+              button 
+              onClick={() => navigate(item.path)}
+              sx={{ 
+                color: '#E5E7EB', 
+                borderRadius: 1,
+                cursor: 'pointer',
+                '&:hover': { bgcolor: 'rgba(71, 124, 216, 0.1)' }
+              }}
+            >
               <ListItemIcon sx={{ color: '#9CA3AF', minWidth: 36 }}>
                 {item.icon}
               </ListItemIcon>

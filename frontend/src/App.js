@@ -15,12 +15,13 @@ import RoutinesPage from "./pages/RoutinesPage";
 import Workouts from "./pages/Workouts";
 import BodyPartPage from "./pages/BodyPart";
 import LoginSignup from "./pages/Login-Signup";
+import TrainersPage from "./pages/TrainersPage";
+import AboutPage from "./pages/AboutPage";
 
 /* ========== ADMIN PAGES ========== */
 import DashboardPage from "./pages/admin/DashboardPage";
 import UsersPage from "./pages/admin/UsersPage";
 import WorkoutsPage from "./pages/admin/WorkoutsPage";
-
 import SettingsPage from "./pages/admin/SettingsPage";
 
 const App = () => {
@@ -99,12 +100,29 @@ const App = () => {
         }
       />
 
+      <Route
+        path="/trainers"
+        element={
+          <UserLayout>
+            <TrainersPage />
+          </UserLayout>
+        }
+      />
+
+      <Route
+        path="/about"
+        element={
+          <UserLayout>
+            <AboutPage />
+          </UserLayout>
+        }
+      />
+
       {/* ================= ADMIN ROUTES ================= */}
       <Route path="/admin" element={<AdminLayout />}>
         <Route index element={<DashboardPage />} />
         <Route path="users" element={<UsersPage />} />
         <Route path="workouts" element={<WorkoutsPage />} />
-       
         <Route path="settings" element={<SettingsPage />} />
       </Route>
     </Routes>

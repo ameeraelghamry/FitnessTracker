@@ -1,20 +1,43 @@
 import React, { useEffect, useState } from "react";
-import { Box, Container, Divider } from "@mui/material";
+import { Box, Container, Divider, Typography, Grid, Card, CardContent, CircularProgress } from "@mui/material";
 import Sidebar from "../components/profilepage/SideBar";
 import ProfileHeader from "../components/profilepage/ProfileHeader";
 import WorkoutChart from "../components/profilepage/WorkoutChart";
 import DashboardCards from "../components/profilepage/DashboardCards";
 import RecentWorkouts from "../components/profilepage/RecentWorkouts";
+import SocialShare from "../components/common/SocialShare";
+
+const API_BASE_URL = "http://localhost:5000/api/social";
 
 const ProfilePage = () => {
-  const [user, setUser] = useState({ name: "Guest" });
+  const [user, setUser] = useState({ name: "Guest", id: null });
+  const [userStats, setUserStats] = useState(null);
+  const [loadingStats, setLoadingStats] = useState(false);
 
   useEffect(() => {
     const storedUser = JSON.parse(localStorage.getItem("user"));
     if (storedUser && storedUser.username) {
-      setUser({ name: storedUser.username });
+      setUser({ name: storedUser.username, id: storedUser.id });
+      // Fetch user stats from backend
+      fetchUserStats(storedUser.id);
     }
   }, []);
+
+  const fetchUserStats = async (userId) => {
+    if (!userId) return;
+    try {
+      setLoadingStats(true);
+      const response = await fetch(`${API_BASE_URL}/stats/${userId}`);
+      if (response.ok) {
+        const data = await response.json();
+        setUserStats(data);
+      }
+    } catch (error) {
+      console.error("Error fetching user stats:", error);
+    } finally {
+      setLoadingStats(false);
+    }
+  };
 
   const workoutData = [
     { date: "Jul 26", duration: 3.5, volume: 4200, reps: 45 },
@@ -37,6 +60,11 @@ const ProfilePage = () => {
       exercises: ["Elliptical Trainer", "Bench Press", "Shoulder Press"],
     },
   ];
+
+  // Use backend stats if available, otherwise calculate from local data
+  const totalWorkouts = userStats?.totalWorkouts || workoutData.length;
+  const totalVolume = userStats?.totalVolume || workoutData.reduce((sum, w) => sum + w.volume, 0);
+  const currentStreak = userStats?.currentStreak || 0;
 
   return (
     <Box
@@ -85,12 +113,7 @@ const ProfilePage = () => {
         >
           <ProfileHeader user={user} />
 
-          <Divider
-            sx={{
-              my: 3,
-              borderColor: "rgba(255,255,255,0.1)",
-            }}
-          />
+          <Divider sx={{ my: 3, borderColor: "rgba(255,255,255,0.1)" }} />
 
           <WorkoutChart data={workoutData} accentColor="#477CD8" />
 
@@ -101,6 +124,74 @@ const ProfilePage = () => {
           <Divider sx={{ my: 3, borderColor: "rgba(255,255,255,0.1)" }} />
 
           <RecentWorkouts workouts={recentWorkouts} />
+
+          <Divider sx={{ my: 3, borderColor: "rgba(255,255,255,0.1)" }} />
+
+          {/* Social Sharing Section - Connected to Backend */}
+          <Box sx={{ mt: 4 }}>
+            <Typography variant="h6" fontWeight={600} gutterBottom>
+              Share Your Progress
+            </Typography>
+            <Typography variant="body2" color="rgba(255,255,255,0.7)" sx={{ mb: 3 }}>
+              Share your fitness progress with friends for motivation and accountability!
+            </Typography>
+            
+            <Grid container spacing={3}>
+              <Grid item xs={12} md={6}>
+                <Card
+                  sx={{
+                    borderRadius: 3,
+                    background: "linear-gradient(135deg, #477CD8 0%, #3b6bbf 100%)",
+                    color: "white",
+                    height: "100%",
+                  }}
+                >
+                  <CardContent sx={{ p: 3 }}>
+                    <Typography variant="h6" fontWeight={600} gutterBottom>
+                      Your Stats This Month
+                    </Typography>
+                    {loadingStats ? (
+                      <Box sx={{ display: "flex", justifyContent: "center", py: 2 }}>
+                        <CircularProgress size={24} sx={{ color: "white" }} />
+                      </Box>
+                    ) : (
+                      <Box sx={{ display: "flex", gap: 4, mb: 2, flexWrap: "wrap" }}>
+                        <Box>
+                          <Typography variant="h4" fontWeight={700}>{totalWorkouts}</Typography>
+                          <Typography variant="body2">Workouts</Typography>
+                        </Box>
+                        <Box>
+                          <Typography variant="h4" fontWeight={700}>{(totalVolume / 1000).toFixed(1)}k</Typography>
+                          <Typography variant="body2">Total Volume</Typography>
+                        </Box>
+                        {currentStreak > 0 && (
+                          <Box>
+                            <Typography variant="h4" fontWeight={700}>{currentStreak}</Typography>
+                            <Typography variant="body2">Day Streak 🔥</Typography>
+                          </Box>
+                        )}
+                      </Box>
+                    )}
+                    <SocialShare
+                      variant="button"
+                      userId={user.id}
+                      shareType="progress"
+                      hashtags={["FitVerse", "fitness", "workout", "progress", "motivation"]}
+                    />
+                  </CardContent>
+                </Card>
+              </Grid>
+              
+              <Grid item xs={12} md={6}>
+                <SocialShare
+                  variant="card"
+                  userId={user.id}
+                  shareType="invite"
+                  hashtags={["FitVerse", "fitness", "accountability", "goals"]}
+                />
+              </Grid>
+            </Grid>
+          </Box>
         </Container>
       </Box>
     </Box>

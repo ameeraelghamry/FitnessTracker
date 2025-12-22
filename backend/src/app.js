@@ -4,6 +4,8 @@ import bodyParser from "body-parser";
 import session from "express-session";
 import AuthRoutes from "../routes/AuthRoutes.js";
 import AdminRoutes from "../routes/AdminRoutes.js";
+import NotificationRoutes from "../routes/NotificationRoutes.js";
+import SocialShareRoutes from "../routes/SocialShareRoutes.js";
 import dotenv from "dotenv";
 
 dotenv.config();
@@ -41,6 +43,10 @@ app.use("/api/auth", AuthRoutes);
 console.log("✅ Auth routes registered");
 app.use("/api/admin", AdminRoutes);
 console.log("✅ Admin routes registered");
+app.use("/api/notifications", NotificationRoutes);
+console.log("✅ Notification routes registered");
+app.use("/api/social", SocialShareRoutes);
+console.log("✅ Social Share routes registered");
 
 // ===== Start Server =====
 app.listen(5000, () => console.log("🚀 Server running on port 5000"));

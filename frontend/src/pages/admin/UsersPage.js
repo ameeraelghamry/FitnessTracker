@@ -21,11 +21,15 @@ import {
   CircularProgress,
   Box,
   Alert,
+  Snackbar,
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
+import NotificationsActiveIcon from "@mui/icons-material/NotificationsActive";
+import SendIcon from "@mui/icons-material/Send";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer } from "recharts";
 
 const API_BASE_URL = "http://localhost:5000/api/admin";
+const NOTIFICATION_API = "http://localhost:5000/api/notifications";
 
 const allParts = ["Chest", "Back", "Legs", "Arms", "Shoulders"];
 
@@ -35,9 +39,11 @@ const UsersPage = () => {
   const [error, setError] = useState(null);
   const [addOpen, setAddOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
+  const [reminderOpen, setReminderOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
   const [workoutStats, setWorkoutStats] = useState([]);
   const [loadingWorkouts, setLoadingWorkouts] = useState(false);
+  const [snackbar, setSnackbar] = useState({ open: false, message: "", severity: "success" });
 
   const [newUser, setNewUser] = useState({
     name: "",
@@ -48,6 +54,8 @@ const UsersPage = () => {
     workoutStats: [],
   });
 
+  const [reminderMessage, setReminderMessage] = useState("Time for your workout! Stay consistent and crush your goals! 💪");
+
   useEffect(() => {
     fetchUsers();
   }, []);
@@ -56,15 +64,12 @@ const UsersPage = () => {
     try {
       setLoading(true);
       setError(null);
-      console.log("Fetching users from:", `${API_BASE_URL}/users`);
       
       const response = await fetch(`${API_BASE_URL}/users`);
       if (!response.ok) {
         throw new Error("Failed to fetch users");
       }
       const data = await response.json();
-      
-      console.log(`✅ Fetched ${data.length} users from database:`, data);
       setUsers(data || []);
     } catch (err) {
       console.error("Error fetching users:", err);
@@ -90,9 +95,7 @@ const UsersPage = () => {
       setLoading(true);
       const response = await fetch(`${API_BASE_URL}/users`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           name: newUser.name,
           email: newUser.email,
@@ -102,44 +105,63 @@ const UsersPage = () => {
       });
 
       const data = await response.json();
+      if (!response.ok) throw new Error(data.error || "Failed to create user");
 
-      if (!response.ok) {
-        throw new Error(data.error || "Failed to create user");
-      }
-
-      console.log("✅ User created successfully:", data);
-      alert("User created successfully!");
-      
-      // Reset form
+      setSnackbar({ open: true, message: "User created successfully!", severity: "success" });
       setNewUser({ name: "", email: "", password: "", role: "User", status: "Active", workoutStats: [] });
       handleCloseAdd();
-      
-      // Refresh users list
       fetchUsers();
     } catch (err) {
-      console.error("Error creating user:", err);
-      alert(err.message || "Failed to create user. Please try again.");
+      setSnackbar({ open: true, message: err.message, severity: "error" });
     } finally {
       setLoading(false);
     }
   };
 
   const handleDeleteUser = async (userId) => {
-    if (!window.confirm("Are you sure you want to delete this user?")) {
-      return;
-    }
+    if (!window.confirm("Are you sure you want to delete this user?")) return;
     try {
-      const response = await fetch(`${API_BASE_URL}/users/${userId}`, {
-        method: "DELETE",
-      });
-      if (!response.ok) {
-        throw new Error("Failed to delete user");
-      }
-      // Refresh users list
+      const response = await fetch(`${API_BASE_URL}/users/${userId}`, { method: "DELETE" });
+      if (!response.ok) throw new Error("Failed to delete user");
       fetchUsers();
+      setSnackbar({ open: true, message: "User deleted successfully!", severity: "success" });
     } catch (err) {
-      console.error("Error deleting user:", err);
-      alert("Failed to delete user. Please try again.");
+      setSnackbar({ open: true, message: "Failed to delete user", severity: "error" });
+    }
+  };
+
+  const handleSendReminderToAll = async () => {
+    try {
+      const response = await fetch(`${NOTIFICATION_API}/send-reminder`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message: reminderMessage }),
+      });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error);
+      
+      setSnackbar({ open: true, message: `Reminder sent to ${data.sent} users!`, severity: "success" });
+      setReminderOpen(false);
+    } catch (err) {
+      setSnackbar({ open: true, message: "Failed to send reminders", severity: "error" });
+    }
+  };
+
+  const handleSendReminderToUser = async (userId, userName) => {
+    try {
+      const response = await fetch(`${NOTIFICATION_API}/send-reminder/${userId}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ 
+          title: "Workout Reminder",
+          message: "Time for your workout! Stay consistent! 💪",
+          type: "workout_reminder"
+        }),
+      });
+      if (!response.ok) throw new Error("Failed to send reminder");
+      setSnackbar({ open: true, message: `Reminder sent to ${userName}!`, severity: "success" });
+    } catch (err) {
+      setSnackbar({ open: true, message: "Failed to send reminder", severity: "error" });
     }
   };
 
@@ -147,13 +169,9 @@ const UsersPage = () => {
     try {
       setLoadingWorkouts(true);
       const response = await fetch(`${API_BASE_URL}/users/${userId}/workouts`);
-      if (!response.ok) {
-        throw new Error("Failed to fetch workout stats");
-      }
-      const data = await response.json();
-      return data;
+      if (!response.ok) throw new Error("Failed to fetch workout stats");
+      return await response.json();
     } catch (err) {
-      console.error("Error fetching workout stats:", err);
       return [];
     } finally {
       setLoadingWorkouts(false);
@@ -163,10 +181,10 @@ const UsersPage = () => {
   const handleOpenProfile = async (user) => {
     setSelectedUser(user);
     setProfileOpen(true);
-    // Fetch workout stats for this user
     const stats = await fetchUserWorkouts(user.id);
     setWorkoutStats(stats);
   };
+
   const handleCloseProfile = () => {
     setProfileOpen(false);
     setSelectedUser(null);
@@ -182,20 +200,14 @@ const UsersPage = () => {
       if (selectedUser.status) {
         const response = await fetch(`${API_BASE_URL}/users/${selectedUser.id}/status`, {
           method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ status: selectedUser.status }),
         });
-        if (!response.ok) {
-          throw new Error("Failed to update user status");
-        }
+        if (!response.ok) throw new Error("Failed to update user status");
       }
-      // Refresh users list
       fetchUsers();
       handleCloseProfile();
     } catch (err) {
-      console.error("Error updating user:", err);
       alert("Failed to update user. Please try again.");
     }
   };
@@ -204,16 +216,14 @@ const UsersPage = () => {
     const csvContent =
       "data:text/csv;charset=utf-8," +
       ["Name,Email,Role,Status", ...users.map(u => `${u.name},${u.email},${u.role},${u.status}`)].join("\n");
-    const encodedUri = encodeURI(csvContent);
     const link = document.createElement("a");
-    link.setAttribute("href", encodedUri);
+    link.setAttribute("href", encodeURI(csvContent));
     link.setAttribute("download", "users.csv");
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
   };
 
-  // Convert workout stats to chart data
   const getChartData = (stats) => {
     if (!stats || stats.length === 0) return [];
     return stats.map(day => {
@@ -235,22 +245,22 @@ const UsersPage = () => {
 
   return (
     <Card sx={{ p: 4, borderRadius: 3 }}>
-      <Typography variant="h5" fontWeight={600} mb={1}>
-        Users Management
-      </Typography>
-      <Typography variant="body2" color="text.secondary" mb={3}>
-        Total Users: {users.length}
-      </Typography>
+      <Typography variant="h5" fontWeight={600} mb={1}>Users Management</Typography>
+      <Typography variant="body2" color="text.secondary" mb={3}>Total Users: {users.length}</Typography>
 
-      {error && (
-        <Alert severity="error" sx={{ mb: 2 }} onClose={() => setError(null)}>
-          {error}
-        </Alert>
-      )}
+      {error && <Alert severity="error" sx={{ mb: 2 }} onClose={() => setError(null)}>{error}</Alert>}
 
-      <Stack direction="row" spacing={2} mb={2}>
+      <Stack direction="row" spacing={2} mb={2} flexWrap="wrap">
         <Button variant="contained" onClick={handleOpenAdd}>Add User</Button>
         <Button variant="outlined" onClick={handleExport}>Export Users</Button>
+        <Button 
+          variant="contained" 
+          color="secondary" 
+          startIcon={<NotificationsActiveIcon />}
+          onClick={() => setReminderOpen(true)}
+        >
+          Send Reminder to All
+        </Button>
       </Stack>
 
       <Table>
@@ -260,10 +270,9 @@ const UsersPage = () => {
             <TableCell>Email</TableCell>
             <TableCell>Role</TableCell>
             <TableCell>Status</TableCell>
-            <TableCell>Action</TableCell>
+            <TableCell>Actions</TableCell>
           </TableRow>
         </TableHead>
-
         <TableBody>
           {users.length === 0 ? (
             <TableRow>
@@ -279,17 +288,16 @@ const UsersPage = () => {
                 </TableCell>
                 <TableCell>{u.email}</TableCell>
                 <TableCell>
-                  <Chip 
-                    label={u.role || "User"} 
-                    color={u.role === "Admin" ? "primary" : "default"} 
-                    size="small" 
-                  />
+                  <Chip label={u.role || "User"} color={u.role === "Admin" ? "primary" : "default"} size="small" />
                 </TableCell>
                 <TableCell>
                   <Chip label={u.status || "Active"} color={u.status === "Active" ? "success" : "error"} size="small" />
                 </TableCell>
                 <TableCell>
-                  <IconButton color="error" onClick={() => handleDeleteUser(u.id)}>
+                  <IconButton color="primary" onClick={() => handleSendReminderToUser(u.id, u.name)} title="Send Reminder">
+                    <SendIcon />
+                  </IconButton>
+                  <IconButton color="error" onClick={() => handleDeleteUser(u.id)} title="Delete User">
                     <DeleteIcon />
                   </IconButton>
                 </TableCell>
@@ -310,10 +318,6 @@ const UsersPage = () => {
             <MenuItem value="User">User</MenuItem>
             <MenuItem value="Admin">Admin</MenuItem>
           </TextField>
-          <TextField margin="dense" label="Status" name="status" select fullWidth value={newUser.status} onChange={handleChange}>
-            <MenuItem value="Active">Active</MenuItem>
-            <MenuItem value="Blocked">Blocked</MenuItem>
-          </TextField>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleCloseAdd}>Cancel</Button>
@@ -321,18 +325,39 @@ const UsersPage = () => {
         </DialogActions>
       </Dialog>
 
-      {/* User Profile & Workout Stats Dialog */}
+      {/* Send Reminder Dialog */}
+      <Dialog open={reminderOpen} onClose={() => setReminderOpen(false)} maxWidth="sm" fullWidth>
+        <DialogTitle>Send Workout Reminder</DialogTitle>
+        <DialogContent>
+          <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+            This will send a notification to all {users.length} users.
+          </Typography>
+          <TextField
+            fullWidth
+            multiline
+            rows={3}
+            label="Reminder Message"
+            value={reminderMessage}
+            onChange={(e) => setReminderMessage(e.target.value)}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setReminderOpen(false)}>Cancel</Button>
+          <Button variant="contained" startIcon={<SendIcon />} onClick={handleSendReminderToAll}>
+            Send to All Users
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* User Profile Dialog */}
       {selectedUser && (
         <Dialog open={profileOpen} onClose={handleCloseProfile} maxWidth="md" fullWidth>
           <DialogTitle>User Profile & Workout Stats</DialogTitle>
           <DialogContent>
             <Typography variant="subtitle1" fontWeight={600}>Workout Statistics</Typography>
             <Divider sx={{ my: 1 }} />
-
             {loadingWorkouts ? (
-              <Box display="flex" justifyContent="center" p={3}>
-                <CircularProgress />
-              </Box>
+              <Box display="flex" justifyContent="center" p={3}><CircularProgress /></Box>
             ) : workoutStats.length > 0 ? (
               <ResponsiveContainer width="100%" height={300}>
                 <BarChart data={getChartData(workoutStats)}>
@@ -350,30 +375,13 @@ const UsersPage = () => {
                 No workout data available for this user.
               </Typography>
             )}
-
             <Divider sx={{ my: 2 }} />
             <Typography variant="subtitle1" fontWeight={600}>Manage Profile</Typography>
-            <TextField
-              margin="dense"
-              label="Role"
-              name="role"
-              select
-              fullWidth
-              value={selectedUser.role}
-              onChange={handleProfileChange}
-            >
+            <TextField margin="dense" label="Role" name="role" select fullWidth value={selectedUser.role} onChange={handleProfileChange}>
               <MenuItem value="User">User</MenuItem>
               <MenuItem value="Admin">Admin</MenuItem>
             </TextField>
-            <TextField
-              margin="dense"
-              label="Status"
-              name="status"
-              select
-              fullWidth
-              value={selectedUser.status}
-              onChange={handleProfileChange}
-            >
+            <TextField margin="dense" label="Status" name="status" select fullWidth value={selectedUser.status} onChange={handleProfileChange}>
               <MenuItem value="Active">Active</MenuItem>
               <MenuItem value="Blocked">Blocked</MenuItem>
             </TextField>
@@ -384,6 +392,15 @@ const UsersPage = () => {
           </DialogActions>
         </Dialog>
       )}
+
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={4000}
+        onClose={() => setSnackbar({ ...snackbar, open: false })}
+        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+      >
+        <Alert severity={snackbar.severity}>{snackbar.message}</Alert>
+      </Snackbar>
     </Card>
   );
 };
