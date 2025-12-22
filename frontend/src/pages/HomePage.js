@@ -14,6 +14,7 @@ const HomePage = () => {
   const [openQuestionnaire, setOpenQuestionnaire] = useState(false);
   const [showSignup, setShowSignup] = useState(false);
   const [openLogin, setOpenLogin] = useState(false);
+  const [questionnaireAnswers, setQuestionnaireAnswers] = useState(null);
 
   const handleOpenQuestionnaire = () => {
     setOpenQuestionnaire(true);
@@ -59,7 +60,10 @@ const HomePage = () => {
         >
           {!showSignup ? (
             <QuestionnairePage
-              onFinish={() => setShowSignup(true)}
+              onFinish={(answers) => {
+                setQuestionnaireAnswers(answers);
+                setShowSignup(true);
+              }}
               onClose={handleCloseQuestionnaire}
             />
           ) : (
@@ -73,7 +77,10 @@ const HomePage = () => {
                 position: "relative",
               }}
             >
-              <Signup onClose={handleCloseQuestionnaire} />
+              <Signup
+                onClose={handleCloseQuestionnaire}
+                questionnaire={questionnaireAnswers}
+              />
             </Box>
           )}
         </Box>

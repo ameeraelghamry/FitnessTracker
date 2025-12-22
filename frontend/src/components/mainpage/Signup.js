@@ -13,7 +13,7 @@ import { Formik, Form } from "formik";
 import * as Yup from "yup";
 import styles from "../../mui/theme";
 
-function Signup({ onClose }) {
+function Signup({ onClose, questionnaire }) {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
 
@@ -22,10 +22,10 @@ function Signup({ onClose }) {
     setError("");
 
     try {
-      const res = await fetch("http://localhost:3001/signup", {
+      const res = await fetch("http://localhost:5000/api/auth/signup", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, email, password }),
+        body: JSON.stringify({ username, email, password, questionnaire }),
       });
 
       const data = await res.json();
