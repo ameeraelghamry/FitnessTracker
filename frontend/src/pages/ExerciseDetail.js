@@ -1,7 +1,7 @@
 import React from "react";
 import { useLocation } from "react-router-dom";
 import { Box, Typography } from "@mui/material";
-import Header from "../components/header";
+import Header from "../components/mainpage/header";
 import Footer from "../components/mainpage/Footer";
 
 const ExerciseDetail = () => {

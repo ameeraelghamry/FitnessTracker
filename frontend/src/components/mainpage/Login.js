@@ -20,38 +20,40 @@ function Login({ onClose }) {
   const navigate = useNavigate();
 
   const handleSubmit = async (values, { resetForm }) => {
-    const { email, password } = values;
-    setError("");
+  const { email, password } = values;
+  setError("");
 
-    try {
-      const res = await fetch("http://localhost:3000/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
-      });
+  try {
+    // ✅ Make sure to declare 'res' with const
+    const res = await fetch("http://localhost:5000/api/auth/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include", // send session cookie
+      body: JSON.stringify({ email, password }),
+    });
 
-      const data = await res.json();
+    const data = await res.json(); // now 'res' is defined
 
-      if (!res.ok) {
-        setError(data.error || "Invalid credentials");
-        return;
-      }
-
-      // ✅ Store user info (e.g. username, email) in localStorage
-      localStorage.setItem(
-        "user",
-        JSON.stringify({ username: data.username || email })
-      );
-
-      alert(data.message || "Login successful!");
-      resetForm();
-
-      // ✅ Navigate to profile
-      navigate("/ProfilePage");
-    } catch (err) {
-      setError("Server error. Please try again later.");
+    if (!res.ok) {
+      setError(data.error || "Invalid credentials");
+      return;
     }
-  };
+
+    localStorage.setItem(
+      "user",
+      JSON.stringify({ username: data.username || email })
+    );
+
+    alert(data.message || "Login successful!");
+    resetForm();
+
+    navigate("/ProfilePage");
+  } catch (err) {
+    console.error("Login error:", err);
+    setError("Server error. Please try again later.");
+  }
+};
+
 
   const validationSchema = Yup.object({
     email: Yup.string()
