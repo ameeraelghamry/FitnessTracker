@@ -1,37 +1,114 @@
-import React from 'react'
-import './App.css'
-import { Route, Routes } from "react-router-dom";
-import { Box } from '@mui/material';
-import Footer from './components/mainpage/Footer';
-import Home from './pages/HomePage';
-import ExerciseDetail from './pages/ExerciseDetail';
-import QuestionnairePage from './pages/Questionnairepage';
-import ProfilePage from './pages/ProfilePage';
-import RoutinesPage from './pages/RoutinesPage';
-import Workouts from './pages/Workouts';
+import React from "react";
+import "./App.css";
+import { Routes, Route } from "react-router-dom";
+
+/* ========== LAYOUTS ========== */
+import UserLayout from "./layouts/UserLayout";
+import AdminLayout from "./layouts/AdminLayout";
+
+/* ========== USER PAGES ========== */
+import Home from "./pages/HomePage";
+import ExerciseDetail from "./pages/ExerciseDetail";
+import QuestionnairePage from "./pages/Questionnairepage";
+import ProfilePage from "./pages/ProfilePage";
+import RoutinesPage from "./pages/RoutinesPage";
+import Workouts from "./pages/Workouts";
 import BodyPartPage from "./pages/BodyPart";
-import LoginSignup from "./pages/Login-Signup"
+import LoginSignup from "./pages/Login-Signup";
+
+/* ========== ADMIN PAGES ========== */
+import DashboardPage from "./pages/admin/DashboardPage";
+import UsersPage from "./pages/admin/UsersPage";
+import WorkoutsPage from "./pages/admin/WorkoutsPage";
+
+import SettingsPage from "./pages/admin/SettingsPage";
 
 const App = () => {
-    return (
-        <Box width="400px" sx={{ width: { xl: '1488' } }} m="auto">
+  return (
+    <Routes>
+      {/* ================= USER ROUTES ================= */}
+      <Route
+        path="/"
+        element={
+          <UserLayout>
+            <Home />
+          </UserLayout>
+        }
+      />
 
+      <Route
+        path="/exercise/:id"
+        element={
+          <UserLayout>
+            <ExerciseDetail />
+          </UserLayout>
+        }
+      />
 
-            <Routes>
-                <Route path="/" element={<Home />} />
-                <Route path="/exercise/:id" element={<ExerciseDetail />} />
-                <Route path="/ProfilePage" element={< ProfilePage />} />
-                <Route path="/RoutinesPage" element={< RoutinesPage />} />
-                <Route path="/Questionnairepage" element={< QuestionnairePage />} />
-                <Route path="/Workouts" element={< Workouts />} />
-                <Route path="/bodypart/:bodyPartName" element={<BodyPartPage />} />
-                <Route path="/Login-Signup" element={<LoginSignup />} />
+      <Route
+        path="/ProfilePage"
+        element={
+          <UserLayout>
+            <ProfilePage />
+          </UserLayout>
+        }
+      />
 
-            </Routes>
+      <Route
+        path="/RoutinesPage"
+        element={
+          <UserLayout>
+            <RoutinesPage />
+          </UserLayout>
+        }
+      />
 
+      <Route
+        path="/Questionnairepage"
+        element={
+          <UserLayout>
+            <QuestionnairePage />
+          </UserLayout>
+        }
+      />
 
-        </Box >
-    )
-}
+      <Route
+        path="/Workouts"
+        element={
+          <UserLayout>
+            <Workouts />
+          </UserLayout>
+        }
+      />
 
-export default App
+      <Route
+        path="/bodypart/:bodyPartName"
+        element={
+          <UserLayout>
+            <BodyPartPage />
+          </UserLayout>
+        }
+      />
+
+      <Route
+        path="/Login-Signup"
+        element={
+          <UserLayout>
+            <LoginSignup />
+          </UserLayout>
+        }
+      />
+
+      {/* ================= ADMIN ROUTES ================= */}
+      <Route path="/admin" element={<AdminLayout />}>
+        <Route index element={<DashboardPage />} />
+        <Route path="users" element={<UsersPage />} />
+        <Route path="workouts" element={<WorkoutsPage />} />
+       
+        <Route path="settings" element={<SettingsPage />} />
+      </Route>
+    </Routes>
+  );
+};
+
+export default App;
