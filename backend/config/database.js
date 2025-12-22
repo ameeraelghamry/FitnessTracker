@@ -1,4 +1,8 @@
+import dotenv from "dotenv";
+dotenv.config(); // MUST be before any process.env usage
+
 import mysql from "mysql2";
+
 
 class Database {
   static instance;
