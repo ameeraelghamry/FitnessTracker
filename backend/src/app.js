@@ -8,7 +8,7 @@ import exerciseRoutes from "../routes/exerciseRoutes.js";
 import userRoutes from "../routes/userRoutes.js";
 import AdminRoutes from "../routes/AdminRoutes.js";
 import notificationRoutes from "../routes/notificationRoutes.js";
-import socialShareRoutes from "../routes/socialShareRoutes.js";
+import socialShareRoutes from "../routes/SocialShareRoutes.js";
 import fitnessGoalRoutes from "../routes/fitnessGoalRoutes.js";
 import workoutReminderRoutes from "../routes/workoutReminderRoutes.js";
 import dotenv from "dotenv";
