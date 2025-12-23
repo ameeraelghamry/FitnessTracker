@@ -7,6 +7,10 @@ import routineRoutes from "../routes/routineRoutes.js";
 import exerciseRoutes from "../routes/exerciseRoutes.js";
 import userRoutes from "../routes/userRoutes.js";
 import AdminRoutes from "../routes/AdminRoutes.js";
+import notificationRoutes from "../routes/notificationRoutes.js";
+import socialShareRoutes from "../routes/socialShareRoutes.js";
+import fitnessGoalRoutes from "../routes/fitnessGoalRoutes.js";
+import workoutReminderRoutes from "../routes/workoutReminderRoutes.js";
 import dotenv from "dotenv";
 
 dotenv.config();
@@ -45,6 +49,10 @@ app.use("/api/routines", routineRoutes);
 app.use("/api/exercises", exerciseRoutes);
 app.use("/api/user", userRoutes);
 app.use("/api/admin", AdminRoutes);
+app.use("/api/notifications", notificationRoutes);
+app.use("/api/social-shares", socialShareRoutes);
+app.use("/api/goals", fitnessGoalRoutes);
+app.use("/api/reminders", workoutReminderRoutes);
 console.log("✅ All routes registered");
 
 // ===== Start Server =====

@@ -20,6 +20,9 @@ import SettingsPage from "./pages/SettingsPage";
 import Workouts from "./pages/Workouts";
 import BodyPartPage from "./pages/BodyPart";
 import LoginSignup from "./pages/Login-Signup";
+import NotificationsPage from "./pages/NotificationsPage";
+import SocialSharesPage from "./pages/SocialSharesPage";
+import GoalsRemindersPage from "./pages/GoalsRemindersPage";
 
 // Admin Pages & Layout
 import AdminLayout from "./layouts/AdminLayout";
@@ -32,7 +35,7 @@ const App = () => {
   const location = useLocation();
 
   // Routes that should show the sidebar
-  const sidebarRoutes = ["/routines", "/exercises", "/settings"];
+  const sidebarRoutes = ["/routines", "/exercises", "/settings", "/notifications", "/social-shares", "/goals"];
   const showSidebar = sidebarRoutes.includes(location.pathname);
 
   // Routes that should be full-width (no sidebar)
@@ -104,6 +107,9 @@ const App = () => {
               <Route path="/routines" element={<RoutinesPage />} />
               <Route path="/exercises" element={<ExercisesPage />} />
               <Route path="/settings" element={<SettingsPage />} />
+              <Route path="/notifications" element={<NotificationsPage />} />
+              <Route path="/social-shares" element={<SocialSharesPage />} />
+              <Route path="/goals" element={<GoalsRemindersPage />} />
             </Routes>
           </Box>
         </Box>

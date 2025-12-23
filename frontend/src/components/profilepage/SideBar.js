@@ -1,11 +1,12 @@
-import React from 'react';
-import { Box, Typography, List, ListItem, ListItemIcon, ListItemText, Divider, Button } from '@mui/material';
-import { Home, FitnessCenter, Person, Settings, Explore, AdminPanelSettings } from '@mui/icons-material';
+import React, { useState, useEffect } from 'react';
+import { Box, Typography, List, ListItem, ListItemIcon, ListItemText, Divider, Button, Badge } from '@mui/material';
+import { Home, FitnessCenter, Person, Settings, Explore, AdminPanelSettings, Notifications, Share, Flag } from '@mui/icons-material';
 import { useNavigate, useLocation } from 'react-router-dom';
 
 const Sidebar = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const [unreadCount, setUnreadCount] = useState(0);
 
   // Get user role from localStorage
   const getUser = () => {
@@ -19,6 +20,28 @@ const Sidebar = () => {
 
   const user = getUser();
   const isAdmin = user?.role?.toLowerCase() === "admin";
+
+  // Fetch unread notification count
+  useEffect(() => {
+    const fetchUnreadCount = async () => {
+      try {
+        const res = await fetch("http://localhost:5000/api/notifications/unread-count", {
+          credentials: "include",
+        });
+        if (res.ok) {
+          const data = await res.json();
+          setUnreadCount(data.count || 0);
+        }
+      } catch (err) {
+        console.error("Error fetching notifications:", err);
+      }
+    };
+
+    fetchUnreadCount();
+    // Refresh every 30 seconds
+    const interval = setInterval(fetchUnreadCount, 30000);
+    return () => clearInterval(interval);
+  }, []);
 
   const handleLogout = async () => {
     try {
@@ -39,7 +62,18 @@ const Sidebar = () => {
     { text: 'Discover', icon: <Explore />, path: '/' },
     { text: 'Routines', icon: <FitnessCenter />, path: '/routines' },
     { text: 'Exercises', icon: <FitnessCenter />, path: '/exercises' },
+    { text: 'Goals & Reminders', icon: <Flag />, path: '/goals' },
     { text: 'Profile', icon: <Person />, path: '/ProfilePage' },
+    { 
+      text: 'Notifications', 
+      icon: (
+        <Badge badgeContent={unreadCount} color="error" max={99}>
+          <Notifications />
+        </Badge>
+      ), 
+      path: '/notifications' 
+    },
+    { text: 'Social Shares', icon: <Share />, path: '/social-shares' },
     { text: 'Settings', icon: <Settings />, path: '/settings' },
     // Admin-only menu item
     ...(isAdmin ? [{ text: 'Admin Panel', icon: <AdminPanelSettings />, path: '/admin' }] : []),

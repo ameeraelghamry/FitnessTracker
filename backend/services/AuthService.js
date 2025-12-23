@@ -93,6 +93,14 @@ class AuthService {
               role: normalizedRole
             };
 
+            // Create welcome notification
+            const db = require("../config/database.js").default.getConnection();
+            db.query(
+              "INSERT INTO notifications (user_id, type, title, message) VALUES (?, ?, ?, ?)",
+              [userId, "welcome", "Welcome to FitVerse!", `Hi ${username}! Start your fitness journey today.`],
+              () => {} // Fire and forget
+            );
+
             if (questionnaire) {
               Questionnaire.saveForUser(userId, questionnaire, (qErr) => {
                 if (qErr) {
